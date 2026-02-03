@@ -1,0 +1,193 @@
+
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
+import AuthCarousel from '../components/AuthCarousel';
+import { Eye, EyeOff } from 'lucide-react';
+
+const Register = () => {
+    const [username, setUsername] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const { register } = useAuth();
+    const navigate = useNavigate();
+    const [error, setError] = useState(null);
+    const [validationErrors, setValidationErrors] = useState({});
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+        setValidationErrors({});
+
+        if (password !== passwordConfirmation) {
+            setError("Passwords do not match");
+            return;
+        }
+        const result = await register({ username, full_name: fullName, email, phone, password, password_confirmation: passwordConfirmation });
+        if (result.success) {
+            navigate('/login');
+        } else {
+            setError(result.message);
+            if (result.errors) {
+                setValidationErrors(result.errors);
+            }
+        }
+    };
+
+    return (
+        <div className="flex min-h-screen bg-gray-50">
+            {/* Left Side - Carousel */}
+            <AuthCarousel
+                title="Join Our Health Unit"
+                subtitle="Ensure equipment readiness for everyone."
+            />
+
+            {/* Right Side - Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white overflow-y-auto">
+                <div className="w-full max-w-md py-8">
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">Buat Akun Baru</h2>
+                        <p className="text-gray-500">
+                            Sudah punya akun? <Link to="/login" className="text-emerald-600 font-semibold hover:underline">Login</Link>
+                        </p>
+                    </div>
+
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                                <input
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    className={`w-full px-4 py-2 rounded-lg border ${validationErrors.username ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none`}
+                                    required
+                                />
+                                {validationErrors.username && <p className="text-red-500 text-xs mt-1">{validationErrors.username[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                                <input
+                                    type="text"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    className={`w-full px-4 py-2 rounded-lg border ${validationErrors.full_name ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none`}
+                                    required
+                                />
+                                {validationErrors.full_name && <p className="text-red-500 text-xs mt-1">{validationErrors.full_name[0]}</p>}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className={`w-full px-4 py-2 rounded-lg border ${validationErrors.email ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none`}
+                                required
+                            />
+                            {validationErrors.email && <p className="text-red-500 text-xs mt-1">{validationErrors.email[0]}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
+                            <input
+                                type="text"
+                                value={phone}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, '');
+                                    if (value.length <= 12) setPhone(value);
+                                }}
+                                className={`w-full px-4 py-2 rounded-lg border ${validationErrors.phone ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none`}
+                                placeholder="Contoh: 081234567890"
+                                required
+                            />
+                            {validationErrors.phone && <p className="text-red-500 text-xs mt-1">{validationErrors.phone[0]}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className={`w-full px-4 py-2 rounded-lg border ${validationErrors.password ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none pr-10`}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                            {validationErrors.password && <p className="text-red-500 text-xs mt-1">{validationErrors.password[0]}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={passwordConfirmation}
+                                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none pr-10"
+                                    required
+                                />
+                                {/* Optional: eye icon here too, or minimal one eye covers both conceptually */}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center pt-2">
+                            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 mr-2" required />
+                            <span className="text-sm text-gray-500">Saya menyetujui <a href="#" className="text-emerald-600 hover:underline">Aturan & Ketentuan</a> MediUKS</span>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors shadow-lg shadow-emerald-600/30"
+                        >
+                            Buat Akun
+                        </button>
+
+                        <div className="relative my-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-200"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-4 bg-white text-gray-500">Atau daftar dengan</span>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <button type="button" className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="h-5 w-5 mr-2" alt="Google" />
+                                <span className="text-sm font-medium text-gray-700">Google</span>
+                            </button>
+                            <button type="button" className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="h-5 w-5 mr-2" alt="Facebook" />
+                                <span className="text-sm font-medium text-gray-700">Facebook</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Register;
+
