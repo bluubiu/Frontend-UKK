@@ -14,7 +14,8 @@ import {
     Edit3,
     ArrowRight,
     Loader2,
-    AlertCircle
+    AlertCircle,
+    Sparkles
 } from 'lucide-react';
 
 const ProfilePage = () => {
@@ -114,11 +115,11 @@ const ProfilePage = () => {
     return (
         <div className="max-w-6xl mx-auto space-y-8 pb-20 animate-fade-in">
             {/* Header Section */}
-            <div className="relative overflow-hidden rounded-[40px] bg-[#1C1F2B] p-10 md:p-14 text-white shadow-2xl">
+            <div className="relative overflow-hidden rounded-[40px] bg-gradient-to-r from-emerald-600 to-emerald-500 p-10 md:p-14 text-white shadow-2xl">
                 <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
                     {/* Avatar Section */}
                     <div className="relative group">
-                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-[32px] bg-emerald-600/20 border-4 border-white/10 flex items-center justify-center text-white text-5xl font-black overflow-hidden shadow-2xl">
+                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-[32px] bg-emerald-600/20 border-4 border-white/90 flex items-center justify-center text-white text-5xl font-black overflow-hidden shadow-2xl">
                             {profile?.profile_photo_path ? (
                                 <img
                                     src={`http://127.0.0.1:8000/storage/${profile.profile_photo_path}`}
@@ -132,7 +133,7 @@ const ProfilePage = () => {
                         <button
                             onClick={() => fileInputRef.current?.click()}
                             disabled={photoUploading}
-                            className="absolute -bottom-2 -right-2 bg-emerald-600 p-3 rounded-2xl shadow-xl hover:bg-emerald-500 transition-all border-4 border-[#1C1F2B] disabled:opacity-50"
+                            className="absolute -bottom-2 -right-2 bg-emerald-600 p-3 rounded-2xl shadow-xl hover:bg-emerald-500 transition-all border-4 border-white/60 disabled:opacity-50"
                         >
                             {photoUploading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -155,13 +156,13 @@ const ProfilePage = () => {
                             {profile?.role?.name} Akun
                         </div>
                         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">{profile?.full_name}</h1>
-                        <p className="text-gray-400 font-medium">@{profile?.username} • Member sejak {new Date(profile?.created_at).getFullYear()}</p>
+                        <p className="text-[#FFFDCE]/60 font-medium">@{profile?.username} • Member sejak {new Date(profile?.created_at).getFullYear()}</p>
 
                         <div className="flex flex-wrap gap-4 pt-4 justify-center md:justify-start">
-                            <div className="bg-white/10 px-5 py-3 rounded-2xl border border-white/5 flex items-center gap-3">
+                            <div className="bg-white/20 px-5 py-3 rounded-2xl border border-white/25 flex items-center gap-3">
                                 <TrendingUp className="w-5 h-5 text-emerald-400" />
                                 <div>
-                                    <p className="text-xs text-gray-400 font-bold uppercase">Skor Kepatuhan</p>
+                                    <p className="text-xs text-black/50 font-bold uppercase">Skor Kepatuhan</p>
                                     <p className="text-lg font-black">{profile?.score || 0}</p>
                                 </div>
                             </div>
@@ -170,6 +171,11 @@ const ProfilePage = () => {
                 </div>
 
                 {/* Decorative */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none mix-blend-overlay"></div>
+                        <div className="absolute bottom-0 right-20 w-64 h-64 bg-emerald-400/30 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="absolute right-0 bottom-0 opacity-20 transform translate-y-10 translate-x-10">
+                            <Sparkles size={200} />
+                        </div>
                 <div className="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl"></div>
             </div>
 

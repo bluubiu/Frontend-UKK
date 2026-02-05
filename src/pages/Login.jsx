@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import axios from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import AuthCarousel from '../components/AuthCarousel';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -88,7 +90,58 @@ const Login = () => {
                                 <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 mr-2" />
                                 Ingat saya
                             </label>
-                            <a href="#" className="text-gray-500 hover:text-red-600 transition-colors">Lupa password?</a>
+                            <button
+                                type="button"
+                                onClick={async () => {
+                                    const { value: username } = await Swal.fire({
+                                        title: 'Lupa Password?',
+                                        text: 'Masukkan username Anda untuk memberitahu Administrator.',
+                                        input: 'text',
+                                        inputPlaceholder: 'Username Anda',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Kirim',
+                                        cancelButtonText: 'Batal',
+                                        confirmButtonColor: '#10B981',
+                                        cancelButtonColor: '#e46a6aff',
+                                        inputValidator: (value) => {
+                                            if (!value) {
+                                                return 'Username tidak boleh kosong!';
+                                            }
+                                        }
+                                    });
+
+                                    if (username) {
+                                        try {
+                                            Swal.fire({
+                                                title: 'Mengirim...',
+                                                allowOutsideClick: false,
+                                                didOpen: () => {
+                                                    Swal.showLoading();
+                                                }
+                                            });
+
+                                            await axios.post('/forgot-password-notification', { username });
+
+                                            Swal.fire({
+                                                title: 'Terikirim!',
+                                                text: 'Notifikasi telah dikirim ke Administrator. Tunggu beberapa saat dengan password default "password123".',
+                                                icon: 'success',
+                                                confirmButtonColor: '#10B981',
+                                            });
+                                        } catch (error) {
+                                            Swal.fire({
+                                                title: 'Gagal!',
+                                                text: error.response?.data?.message || 'Terjadi kesalahan saat mengirim notifikasi.',
+                                                icon: 'error',
+                                                confirmButtonColor: '#EF4444',
+                                            });
+                                        }
+                                    }
+                                }}
+                                className="text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline transition-all"
+                            >
+                                Lupa Password?
+                            </button>
                         </div>
 
                         <button
