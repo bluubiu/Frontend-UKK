@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
-import { CheckCircle2, XCircle, AlertCircle, Search, Clock, User, ArrowRight } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertCircle, Search, Clock, User, ArrowRight, Printer } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 
 const FinesVerificationPage = () => {
@@ -62,9 +62,24 @@ const FinesVerificationPage = () => {
 
     return (
         <div className="space-y-8 max-w-6xl mx-auto pb-12">
-            <div>
-                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Verifikasi Denda</h1>
-                <p className="text-gray-500 mt-2 font-medium">Verifikasi pembayaran denda yang diajukan peminjam.</p>
+            <div className="flex justify-between items-start">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Verifikasi Denda</h1>
+                    <p className="text-gray-500 mt-2 font-medium">Verifikasi pembayaran denda yang diajukan peminjam.</p>
+                </div>
+                <button
+                    onClick={() => {
+                        const iframe = document.createElement('iframe');
+                        iframe.style.display = 'none';
+                        iframe.src = `/admin/fines-verification/print?status=${filter}`;
+                        document.body.appendChild(iframe);
+                        setTimeout(() => document.body.removeChild(iframe), 60000);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-all shadow-sm"
+                >
+                    <Printer className="w-4 h-4" />
+                    <span className="hidden sm:inline">Cetak Laporan</span>
+                </button>
             </div>
 
             <div className="flex gap-2 border-b border-gray-200">

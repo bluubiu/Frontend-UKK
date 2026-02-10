@@ -3,6 +3,7 @@ import axios from '../../api/axios';
 import ItemModal from '../../components/ItemModal';
 import { Plus, Search, Image, Edit, Trash2 } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const ItemsPage = () => {
     const [items, setItems] = useState([]);
@@ -154,9 +155,13 @@ const ItemsPage = () => {
                                             <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center border border-gray-200">
                                                 {item.image ? (
                                                     <img
-                                                        src={item.image.startsWith('http') ? item.image : `${(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}/storage/${item.image}`}
+                                                        src={getImageUrl(item.image)}
                                                         alt={item.name}
                                                         className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                            e.target.parentElement.innerHTML = '<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>';
+                                                        }}
                                                     />
                                                 ) : (
                                                     <Image className="w-6 h-6 text-gray-400" />

@@ -238,10 +238,10 @@ const ReturnsPage = () => {
                                                     {lateBadge.label}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-left">
+                                            <td className="px-6 py-4 text-center">
                                                 <button
                                                     onClick={() => handleStartInspection(ret)}
-                                                    className="px-4 py-2 text-xs font-semibold text-white bg-purple-400 hover:bg-purple-600 rounded-lg transition-colors shadow-lg shadow-purple-500/30"
+                                                    className="px-4 py-2 text-xs font-semibold text-white bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors shadow-lg shadow-purple-500/30"
                                                 >
                                                     Mulai Pemeriksaan
                                                 </button>

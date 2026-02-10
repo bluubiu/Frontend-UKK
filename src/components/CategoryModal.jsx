@@ -40,7 +40,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             onClose();
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.message || 'Something went wrong');
+            setError(err.response?.data?.message || 'Gagal menambahkan kategori');
         } finally {
             setLoading(false);
         }
@@ -72,7 +72,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Nama Kategori</label>
                         <input
                             type="text"
                             name="name"
@@ -85,7 +85,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
                         <textarea
                             name="description"
                             value={formData.description}
@@ -102,7 +102,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                             onClick={onClose}
                             className="flex-1 px-4 py-2.5 rounded-xl text-gray-700 font-medium hover:bg-gray-100 transition-colors"
                         >
-                            Cancel
+                            Batal
                         </button>
                         <button
                             type="submit"

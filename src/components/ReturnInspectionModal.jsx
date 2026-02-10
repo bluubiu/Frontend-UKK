@@ -90,40 +90,73 @@ const ReturnInspectionModal = ({ isOpen, onClose, returnData, onSubmit }) => {
     if (!isOpen) return null;
 
     // Reusable Rating Option Component
-    const RatingOption = ({ value, label, description, current, onChange, color = "emerald" }) => (
-        <label
-            className={`relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 group ${current === value
-                ? `border-${color}-500 bg-${color}-50 ring-1 ring-${color}-500`
-                : 'border-gray-100 bg-white hover:border-emerald-200 hover:shadow-md'
-                }`}
-        >
-            <input
-                type="radio"
-                name="rating"
-                value={value}
-                checked={current === value}
-                onChange={() => onChange(value)}
-                className="sr-only"
-            />
-            <div className={`p-2 rounded-full mr-4 transition-colors ${current === value ? `bg-${color}-500 text-white` : 'bg-gray-100 text-gray-400 group-hover:bg-emerald-100 group-hover:text-emerald-600'
-                }`}>
-                {current === value ? (
-                    <CheckCircle2 className="w-5 h-5" />
-                ) : (
-                    <span className="w-5 h-5 flex items-center justify-center font-bold text-xs">{value}</span>
-                )}
-            </div>
-            <div>
-                <p className={`font-bold text-sm ${current === value ? 'text-gray-900' : 'text-gray-700'}`}>{label}</p>
-                {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
-            </div>
-            {current === value && (
-                <div className={`absolute top-0 right-0 px-2 py-1 bg-${color}-500 text-white text-[10px] uppercase font-bold rounded-bl-lg rounded-tr-lg`}>
-                    Selected
+    // Reusable Rating Option Component
+    const RatingOption = ({ value, label, description, current, onChange, color = "emerald" }) => {
+        const colorStyles = {
+            emerald: {
+                wrapper: 'border-emerald-500 bg-emerald-50 ring-emerald-500',
+                iconBg: 'bg-emerald-500 text-white',
+                badge: 'bg-emerald-500'
+            },
+            lime: {
+                wrapper: 'border-lime-500 bg-lime-50 ring-lime-500',
+                iconBg: 'bg-lime-500 text-white',
+                badge: 'bg-lime-500'
+            },
+            yellow: {
+                wrapper: 'border-yellow-500 bg-yellow-50 ring-yellow-500',
+                iconBg: 'bg-yellow-500 text-white',
+                badge: 'bg-yellow-500'
+            },
+            orange: {
+                wrapper: 'border-orange-500 bg-orange-50 ring-orange-500',
+                iconBg: 'bg-orange-500 text-white',
+                badge: 'bg-orange-500'
+            },
+            red: {
+                wrapper: 'border-red-500 bg-red-50 ring-red-500',
+                iconBg: 'bg-red-500 text-white',
+                badge: 'bg-red-500'
+            },
+        };
+
+        const activeStyle = colorStyles[color];
+
+        return (
+            <label
+                className={`relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 group ${current === value
+                    ? `${activeStyle.wrapper} ring-1`
+                    : 'border-gray-100 bg-white hover:border-emerald-200 hover:shadow-md'
+                    }`}
+            >
+                <input
+                    type="radio"
+                    name="rating"
+                    value={value}
+                    checked={current === value}
+                    onChange={() => onChange(value)}
+                    className="sr-only"
+                />
+                <div className={`p-2 rounded-full mr-4 transition-colors ${current === value ? activeStyle.iconBg : 'bg-gray-100 text-gray-400 group-hover:bg-emerald-100 group-hover:text-emerald-600'
+                    }`}>
+                    {current === value ? (
+                        <CheckCircle2 className="w-5 h-5" />
+                    ) : (
+                        <span className="w-5 h-5 flex items-center justify-center font-bold text-xs">{value}</span>
+                    )}
                 </div>
-            )}
-        </label>
-    );
+                <div>
+                    <p className={`font-bold text-sm ${current === value ? 'text-gray-900' : 'text-gray-700'}`}>{label}</p>
+                    {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+                </div>
+                {current === value && (
+                    <div className={`absolute top-0 right-0 px-2 py-1 ${activeStyle.badge} text-white text-[10px] uppercase font-bold rounded-bl-lg rounded-tr-lg`}>
+                        Selected
+                    </div>
+                )}
+            </label>
+        );
+    };
 
     const renderStepContent = () => {
         switch (currentStep) {
@@ -299,7 +332,7 @@ const ReturnInspectionModal = ({ isOpen, onClose, returnData, onSubmit }) => {
                     <div className="flex justify-between items-start mb-4">
                         <div>
                             <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold tracking-wider uppercase mb-2">Inspection</span>
-                            <h2 className="text-2xl font-bold text-gray-900">Check Pengembalian</h2>
+                            <h2 className="text-2xl font-bold text-gray-900">Cek Pengembalian</h2>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">
                             <XCircle className="w-6 h-6" />

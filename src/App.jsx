@@ -22,6 +22,8 @@ import FinesVerificationPage from './pages/admin/FinesVerificationPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import ActivityLogPage from './pages/admin/ActivityLogPage';
 import LoanPrintPage from './pages/admin/LoanPrintPage';
+import ReportsPrintPage from './pages/admin/ReportsPrintPage';
+import FinesPrintPage from './pages/admin/FinesPrintPage';
 
 // Borrower Pages
 import BorrowerItemsPage from './pages/borrower/BorrowerItemsPage';
@@ -54,6 +56,22 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['admin', 'petugas']}>
                       <LoanPrintPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/reports/print"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'petugas']}>
+                      <ReportsPrintPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/fines-verification/print"
+                  element={
+                    <ProtectedRoute allowedRoles={['petugas']}>
+                      <FinesPrintPage />
                     </ProtectedRoute>
                   }
                 />

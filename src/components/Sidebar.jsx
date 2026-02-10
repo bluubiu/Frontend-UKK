@@ -53,7 +53,7 @@ const Sidebar = ({ onClose, isCollapsed = false }) => {
             </div>
 
             {/* Navigation */}
-            <div className="flex-1 overflow-y-auto px-4 py-2 space-y-8 scrollbar-hide">
+            <div className="flex-1 overflow-y-auto px-4 py-2 space-y-8 scrollbar-hide ">
                 <div>
                     {!isCollapsed && <p className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Menu</p>}
                     <nav className="space-y-2">

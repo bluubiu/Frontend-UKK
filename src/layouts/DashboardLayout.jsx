@@ -40,7 +40,7 @@ const DashboardLayout = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden relative w-full">
                 {/* Header */}
-                <header className="bg-white/80 backdrop-blur-md sticky top-0 z-20 px-8 py-4 flex items-center justify-between border-b border-gray-100">
+                <header className="bg-white/80 shadow backdrop-blur-md sticky top-0 z-20 px-8 py-4 flex items-center justify-between border-b border-gray-100">
 
                     <div className="flex items-center gap-4">
                         {/* Mobile Menu Button */}
@@ -113,7 +113,7 @@ const DashboardLayout = () => {
                 </header>
 
                 {/* Main Content Area */}
-                <main className="flex-1 overflow-y-auto p-8 scrollbar-hide bg-gradient-to-b from-white to-emerald-100/50">
+                <main className="flex-1 overflow-y-auto p-8 scrollbar-hide bg-gray-100">
                     <Outlet />
                 </main>
             </div>

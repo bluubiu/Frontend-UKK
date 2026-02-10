@@ -17,7 +17,8 @@ import {
     Package,
     Calendar,
     Search,
-    Filter
+    Filter,
+    Printer
 } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 
@@ -141,6 +142,20 @@ const ReportsPage = () => {
                         );
                     })}
                 </div>
+
+                <button
+                    onClick={() => {
+                        const iframe = document.createElement('iframe');
+                        iframe.style.display = 'none';
+                        iframe.src = `/admin/reports/print?tab=${activeTab}`;
+                        document.body.appendChild(iframe);
+                        setTimeout(() => document.body.removeChild(iframe), 60000);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-all shadow-sm h-[42px]"
+                >
+                    <Printer className="w-4 h-4" />
+                    <span className="hidden sm:inline">Cetak Laporan</span>
+                </button>
             </div>
 
             {loading ? (

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from '../../api/axios';
 import UserModal from '../../components/UserModal';
-import { UserPlus, Search, Edit, Trash2, Printer } from 'lucide-react';
+import ResetPasswordModal from '../../components/ResetPasswordModal';
+import { UserPlus, Search, Edit, Trash2, Printer, Key } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 
 const UsersPage = () => {
@@ -9,6 +10,7 @@ const UsersPage = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isResetModalOpen, setIsResetModalOpen] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const { showToast, confirm } = useNotification();
 
@@ -82,6 +84,11 @@ const UsersPage = () => {
     const openEditModal = (user) => {
         setCurrentUser(user);
         setIsModalOpen(true);
+    };
+
+    const openResetModal = (user) => {
+        setCurrentUser(user);
+        setIsResetModalOpen(true);
     };
 
     const filteredUsers = users.filter(user =>
@@ -209,6 +216,13 @@ const UsersPage = () => {
                                                 >
                                                     <Edit className="w-5 h-5" />
                                                 </button>
+                                                <button
+                                                    onClick={() => openResetModal(user)}
+                                                    className="p-2 text-gray-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-all"
+                                                    title="Reset Password"
+                                                >
+                                                    <Key className="w-5 h-5" />
+                                                </button>
                                                 {user.id !== 1 && (
                                                     <button
                                                         onClick={() => handleDelete(user.id)}
@@ -272,6 +286,12 @@ const UsersPage = () => {
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={currentUser ? handleUpdate : handleCreate}
                 initialData={currentUser}
+            />
+
+            <ResetPasswordModal
+                isOpen={isResetModalOpen}
+                onClose={() => setIsResetModalOpen(false)}
+                user={currentUser}
             />
         </div>
     );
