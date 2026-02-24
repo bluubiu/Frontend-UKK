@@ -1,14 +1,28 @@
 import { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { useSearchParams } from 'react-router-dom';
 import axios from '../../api/axios';
-import { Search, History, Activity, Clock, ChevronDown, Filter, User, Globe, Laptop, X, Eye, ArrowRight } from 'lucide-react';
+import { Search, History, Activity, Clock, ChevronDown, Filter, User, Globe, Laptop, X, Eye, ArrowRight, Printer, Calendar } from 'lucide-react';
 
 const ActivityLogPage = () => {
+    const [searchParams] = useSearchParams();
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState(searchParams.get('search') || '');
     const [activeTab, setActiveTab] = useState('Semua');
     const [selectedLog, setSelectedLog] = useState(null);
+    const [dateFilter, setDateFilter] = useState('all');
+
+    useEffect(() => {
+        const querySearch = searchParams.get('search');
+        if (querySearch) {
+            setSearch(querySearch);
+        }
+    }, [searchParams]);
+
+    const handlePrint = () => {
+        window.print();
+    };
 
     const tabs = [
         { name: 'Semua', count: logs.length },
@@ -90,13 +104,31 @@ const ActivityLogPage = () => {
                 ip.includes(searchLower);
         });
 
+        // Date Filter
+        if (dateFilter !== 'all') {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
+
+            result = result.filter(log => {
+                const logDate = new Date(log.created_at);
+                const logDay = new Date(logDate.getFullYear(), logDate.getMonth(), logDate.getDate()).getTime();
+
+                if (dateFilter === 'today') return logDay === today;
+                if (dateFilter === 'yesterday') return logDay === yesterday;
+                if (dateFilter === 'month') return logDate.getMonth() === now.getMonth() && logDate.getFullYear() === now.getFullYear();
+                if (dateFilter === 'year') return logDate.getFullYear() === now.getFullYear();
+                return true;
+            });
+        }
+
         const currentTab = tabs.find(t => t.name === activeTab);
         if (currentTab && currentTab.filter) {
             result = result.filter(log => currentTab.filter.includes(log.action));
         }
 
         return result;
-    }, [logs, search, activeTab]);
+    }, [logs, search, activeTab, dateFilter]);
 
     const groupedLogs = useMemo(() => {
         if (!Array.isArray(filteredLogs)) return [];
@@ -253,173 +285,262 @@ const ActivityLogPage = () => {
         <div className="space-y-8 max-w-6xl mx-auto pb-24">
             <DetailModal />
 
-            {/* Header Section */}
-            <div className="flex justify-between items-center px-2">
-                <div>
-                    <h1 className="text-3xl font-extrabold text-[#111827] tracking-tight">Audit Trail & Log</h1>
-                    <p className="text-gray-400 mt-1 font-medium italic">Monitoring aktivitas sistem dengan detail forensik.</p>
-                </div>
-                <div className="flex gap-3">
-                    <button onClick={fetchLogs} className="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all shadow-sm group">
-                        <History className="w-5 h-5 text-gray-400 group-hover:rotate-180 transition-transform duration-500" />
-                    </button>
-                </div>
-            </div>
-
-            <div className="bg-white rounded-[40px] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
-                {/* Tabs Header */}
-                <div className="flex border-b border-gray-100 px-8 bg-gray-50/50 overflow-x-auto scrollbar-hide">
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.name}
-                            onClick={() => setActiveTab(tab.name)}
-                            className={`px-6 py-6 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab.name ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
-                                }`}
-                        >
-                            {tab.name}
-                            {tab.count !== undefined && <span className="ml-2 text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">{tab.count}</span>}
-                            {activeTab === tab.name && (
-                                <div className="absolute bottom-0 left-6 right-6 h-1 bg-blue-600 rounded-t-full"></div>
-                            )}
+            <div className="space-y-8 print:hidden">
+                {/* Header Section */}
+                <div className="flex justify-between items-center px-2">
+                    <div>
+                        <h1 className="text-3xl font-extrabold text-[#111827] tracking-tight">Audit Trail & Log</h1>
+                        <p className="text-gray-400 mt-1 font-medium italic">Monitoring aktivitas sistem dengan detail forensik.</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <button onClick={handlePrint} className="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all shadow-sm group text-gray-600">
+                            <Printer className="w-5 h-5 group-hover:text-blue-600 transition-colors" />
                         </button>
-                    ))}
-                </div>
-
-                {/* Search & Filter Bar */}
-                <div className="p-8 border-b border-gray-100 flex gap-4 bg-white">
-                    <div className="flex-1 relative group">
-                        <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors" />
-                        <input
-                            type="text"
-                            placeholder="Cari berdasarkan aksi, user, deskripsi, atau IP Address..."
-                            className="w-full pl-14 pr-4 py-4 rounded-[24px] bg-gray-50 focus:bg-white border-2 border-transparent focus:border-blue-500/10 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none text-sm font-semibold text-gray-700 placeholder:text-gray-300 shadow-inner"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
+                        <button onClick={fetchLogs} className="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all shadow-sm group">
+                            <History className="w-5 h-5 text-gray-400 group-hover:rotate-180 transition-transform duration-500" />
+                        </button>
                     </div>
                 </div>
 
-                {/* Timeline Content */}
-                <div className="p-8 md:p-12 space-y-12 bg-white/50">
-                    {loading ? (
-                        <div className="py-32 text-center">
-                            <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
-                            <p className="text-gray-400 font-bold tracking-widest uppercase text-xs">Menyusun Audit Trail...</p>
+                <div className="bg-white rounded-[40px] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                    {/* Tabs Header */}
+                    <div className="flex border-b border-gray-100 px-8 bg-gray-50/50 overflow-x-auto scrollbar-hide">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.name}
+                                onClick={() => setActiveTab(tab.name)}
+                                className={`px-6 py-6 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab.name ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
+                                    }`}
+                            >
+                                {tab.name}
+                                {tab.count !== undefined && <span className="ml-2 text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">{tab.count}</span>}
+                                {activeTab === tab.name && (
+                                    <div className="absolute bottom-0 left-6 right-6 h-1 bg-blue-600 rounded-t-full"></div>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Search & Filter Bar */}
+                    <div className="p-8 border-b border-gray-100 flex flex-col md:flex-row gap-4 bg-white">
+                        <div className="flex-1 relative group">
+                            <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-500 transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Cari berdasarkan aksi, user, deskripsi, atau IP Address..."
+                                className="w-full pl-14 pr-4 py-4 rounded-[24px] bg-gray-50 focus:bg-white border-2 border-transparent focus:border-blue-500/10 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none text-sm font-semibold text-gray-700 placeholder:text-gray-300 shadow-inner"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
                         </div>
-                    ) : groupedLogs.length === 0 ? (
-                        <div className="py-32 text-center bg-gray-50/50 rounded-[48px] border-4 border-dotted border-gray-100">
-                            <Activity className="w-16 h-16 text-gray-200 mx-auto mb-6" />
-                            <p className="text-gray-400 font-extrabold text-xl">Audit Log Kosong</p>
-                            <p className="text-gray-400 text-sm mt-1 font-medium italic">Belum ada aktivitas yang tercatat untuk filter ini.</p>
+                        <div className="relative min-w-[200px]">
+                            <Calendar className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            <select
+                                value={dateFilter}
+                                onChange={(e) => setDateFilter(e.target.value)}
+                                className="w-full pl-14 pr-10 py-4 rounded-[24px] bg-gray-50 focus:bg-white border-2 border-transparent focus:border-blue-500/10 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none text-sm font-bold text-gray-700 appearance-none cursor-pointer shadow-inner"
+                            >
+                                <option value="all">Semua Waktu</option>
+                                <option value="today">Hari Ini</option>
+                                <option value="yesterday">Kemarin</option>
+                                <option value="month">Bulan Ini</option>
+                                <option value="year">Tahun Ini</option>
+                            </select>
+                            <ChevronDown className="w-5 h-5 absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                         </div>
-                    ) : (
-                        groupedLogs.map((group, gIndex) => (
-                            <div key={group.label} className="space-y-8 animate-fade-in-up" style={{ animationDelay: `${gIndex * 100}ms` }}>
-                                {/* Group Header */}
-                                <div className="flex items-center gap-5 sticky top-0 z-10 py-2">
-                                    <div className="h-0.5 flex-1 bg-gray-50"></div>
-                                    <div className="flex items-center gap-3 px-6 py-2 bg-white border border-gray-100 rounded-full shadow-sm">
-                                        <Clock className="w-4 h-4 text-blue-500" />
-                                        <h3 className="text-[11px] font-black text-gray-400 tracking-[0.2em] uppercase">{group.label}</h3>
-                                    </div>
-                                    <div className="h-0.5 flex-1 bg-gray-50"></div>
-                                </div>
 
-                                {/* Items in Group */}
-                                <div className="space-y-6">
-                                    {group.items.map((log, lIndex) => (
-                                        <div key={log.id} className="relative flex gap-8 md:gap-12 pl-4">
-                                            {/* Vertical Line Connector */}
-                                            {lIndex !== group.items.length - 1 && (
-                                                <div className="absolute left-[24px] top-12 bottom-[-32px] w-0.5 bg-gradient-to-b from-gray-100 via-gray-50 to-transparent"></div>
-                                            )}
+                    </div>
 
-                                            {/* Dot & Time */}
-                                            <div className="flex flex-col items-center gap-2 w-20 shrink-0 pt-3">
-                                                <div className={`w-3 h-3 rounded-full border-2 border-white shadow-[0_0_0_4px_rgba(59,130,246,0.1)] mb-4 ${log.action.toLowerCase().includes('suspicious') ? 'bg-red-500 animate-pulse' : 'bg-blue-500'
-                                                    }`}></div>
-                                                <span className="text-[11px] font-black text-gray-600 whitespace-nowrap">{formatTime(log.created_at)}</span>
-                                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-tight">{timeAgo(log.created_at)}</span>
-                                            </div>
-
-                                            {/* Main Card */}
-                                            <div className="flex-1 bg-white border border-gray-100 rounded-[32px] p-6 md:p-8 hover:shadow-2xl hover:shadow-gray-200/50 transition-all hover:-translate-y-1 group/card active:scale-[0.99]">
-                                                <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 shadow-inner border border-white flex items-center justify-center overflow-hidden shrink-0 ring-4 ring-gray-50">
-                                                            {log.user?.profile_photo_path ? (
-                                                                <img
-                                                                    src={`http://127.0.0.1:8000/storage/${log.user.profile_photo_path}`}
-                                                                    className="w-full h-full object-cover"
-                                                                    alt=""
-                                                                />
-                                                            ) : (
-                                                                <span className="text-blue-600 font-black text-xl">{log.user?.full_name?.charAt(0) || '?'}</span>
-                                                            )}
-                                                        </div>
-                                                        <div>
-                                                            <div className="flex flex-wrap items-center gap-2">
-                                                                <span className="text-base font-black text-gray-900">{log.user?.full_name || 'System / Unidentified'}</span>
-                                                                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-50 rounded-lg border border-gray-100">
-                                                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                                                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{log.user?.role?.name || 'System'}</span>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-center gap-4 mt-2">
-                                                                <div className="flex items-center gap-1.5 text-gray-400">
-                                                                    <Globe className="w-3.5 h-3.5" />
-                                                                    <span className="text-[11px] font-bold">{log.ip_address || '0.0.0.0'}</span>
-                                                                </div>
-                                                                <div className="h-3 w-px bg-gray-100"></div>
-                                                                <div className="flex items-center gap-1.5 text-gray-400">
-                                                                    <Laptop className="w-3.5 h-3.5" />
-                                                                    <span className="text-[11px] font-bold">{parseBrowser(log.user_agent)}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={`px-5 py-2 rounded-2xl text-[10px] font-black border ${getStatusBadgeColor(log.action)} uppercase tracking-[0.15em] shadow-sm`}>
-                                                        {log.action}
-                                                    </div>
-                                                </div>
-
-                                                <div className="relative">
-                                                    <div className="absolute -left-6 top-0 bottom-0 w-1 bg-blue-100 rounded-full opacity-50"></div>
-                                                    <p className="text-sm text-gray-600 leading-relaxed font-bold bg-blue-50/20 p-5 rounded-[20px] border border-blue-50/50 italic">
-                                                        "{log.description}"
-                                                    </p>
-                                                </div>
-
-                                                <div className="mt-8 flex items-center justify-between">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl border border-emerald-100">
-                                                            <Activity className="w-3.5 h-3.5" />
-                                                            <span className="text-[10px] font-black uppercase tracking-wider">Secured</span>
-                                                        </div>
-                                                        {log.old_values || log.new_values ? (
-                                                            <div className="flex items-center gap-1.5 bg-amber-50 text-amber-600 px-3 py-1.5 rounded-xl border border-amber-100">
-                                                                <Eye className="w-3.5 h-3.5" />
-                                                                <span className="text-[10px] font-black uppercase tracking-wider">Snapshot Available</span>
-                                                            </div>
-                                                        ) : null}
-                                                    </div>
-                                                    <button
-                                                        onClick={() => setSelectedLog(log)}
-                                                        className="group/btn flex items-center gap-2 px-6 py-2.5 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all hover:shadow-lg hover:shadow-blue-200"
-                                                    >
-                                                        Detail Audit
-                                                        <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                    {/* Timeline Content */}
+                    <div className="p-8 md:p-12 space-y-12 bg-white/50">
+                        {loading ? (
+                            <div className="py-32 text-center">
+                                <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+                                <p className="text-gray-400 font-bold tracking-widest uppercase text-xs">Menyusun Audit Trail...</p>
                             </div>
-                        ))
-                    )}
+                        ) : groupedLogs.length === 0 ? (
+                            <div className="py-32 text-center bg-gray-50/50 rounded-[48px] border-4 border-dotted border-gray-100">
+                                <Activity className="w-16 h-16 text-gray-200 mx-auto mb-6" />
+                                <p className="text-gray-400 font-extrabold text-xl">Audit Log Kosong</p>
+                                <p className="text-gray-400 text-sm mt-1 font-medium italic">Belum ada aktivitas yang tercatat untuk filter ini.</p>
+                            </div>
+                        ) : (
+                            groupedLogs.map((group, gIndex) => (
+                                <div key={group.label} className="space-y-8 animate-fade-in-up" style={{ animationDelay: `${gIndex * 100}ms` }}>
+                                    {/* Group Header */}
+                                    <div className="flex items-center gap-5 sticky top-0 z-10 py-2">
+                                        <div className="h-0.5 flex-1 bg-gray-50"></div>
+                                        <div className="flex items-center gap-3 px-6 py-2 bg-white border border-gray-100 rounded-full shadow-sm">
+                                            <Clock className="w-4 h-4 text-blue-500" />
+                                            <h3 className="text-[11px] font-black text-gray-400 tracking-[0.2em] uppercase">{group.label}</h3>
+                                        </div>
+                                        <div className="h-0.5 flex-1 bg-gray-50"></div>
+                                    </div>
+
+                                    {/* Items in Group */}
+                                    <div className="space-y-6">
+                                        {group.items.map((log, lIndex) => (
+                                            <div key={log.id} className="relative flex gap-8 md:gap-12 pl-4">
+                                                {/* Vertical Line Connector */}
+                                                {lIndex !== group.items.length - 1 && (
+                                                    <div className="absolute left-[24px] top-12 bottom-[-32px] w-0.5 bg-gradient-to-b from-gray-100 via-gray-50 to-transparent"></div>
+                                                )}
+
+                                                {/* Dot & Time */}
+                                                <div className="flex flex-col items-center gap-2 w-20 shrink-0 pt-3">
+                                                    <div className={`w-3 h-3 rounded-full border-2 border-white shadow-[0_0_0_4px_rgba(59,130,246,0.1)] mb-4 ${log.action.toLowerCase().includes('suspicious') ? 'bg-red-500 animate-pulse' : 'bg-blue-500'
+                                                        }`}></div>
+                                                    <span className="text-[11px] font-black text-gray-600 whitespace-nowrap">{formatTime(log.created_at)}</span>
+                                                    <span className="text-[9px] text-gray-400 font-bold uppercase tracking-tight">{timeAgo(log.created_at)}</span>
+                                                </div>
+
+                                                {/* Main Card */}
+                                                <div className="flex-1 bg-white border border-gray-100 rounded-[32px] p-6 md:p-8 hover:shadow-2xl hover:shadow-gray-200/50 transition-all hover:-translate-y-1 group/card active:scale-[0.99]">
+                                                    <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 shadow-inner border border-white flex items-center justify-center overflow-hidden shrink-0 ring-4 ring-gray-50">
+                                                                {log.user?.profile_photo_path ? (
+                                                                    <img
+                                                                        src={`http://127.0.0.1:8000/storage/${log.user.profile_photo_path}`}
+                                                                        className="w-full h-full object-cover"
+                                                                        alt=""
+                                                                    />
+                                                                ) : (
+                                                                    <span className="text-blue-600 font-black text-xl">{log.user?.full_name?.charAt(0) || '?'}</span>
+                                                                )}
+                                                            </div>
+                                                            <div>
+                                                                <div className="flex flex-wrap items-center gap-2">
+                                                                    <span className="text-base font-black text-gray-900">{log.user?.full_name || 'System / Unidentified'}</span>
+                                                                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-50 rounded-lg border border-gray-100">
+                                                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{log.user?.role?.name || 'System'}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center gap-4 mt-2">
+                                                                    <div className="flex items-center gap-1.5 text-gray-400">
+                                                                        <Globe className="w-3.5 h-3.5" />
+                                                                        <span className="text-[11px] font-bold">{log.ip_address || '0.0.0.0'}</span>
+                                                                    </div>
+                                                                    <div className="h-3 w-px bg-gray-100"></div>
+                                                                    <div className="flex items-center gap-1.5 text-gray-400">
+                                                                        <Laptop className="w-3.5 h-3.5" />
+                                                                        <span className="text-[11px] font-bold">{parseBrowser(log.user_agent)}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`px-5 py-2 rounded-2xl text-[10px] font-black border ${getStatusBadgeColor(log.action)} uppercase tracking-[0.15em] shadow-sm`}>
+                                                            {log.action}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="relative">
+                                                        <div className="absolute -left-6 top-0 bottom-0 w-1 bg-blue-100 rounded-full opacity-50"></div>
+                                                        <p className="text-sm text-gray-600 leading-relaxed font-bold bg-blue-50/20 p-5 rounded-[20px] border border-blue-50/50 italic">
+                                                            "{log.description}"
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="mt-8 flex items-center justify-between">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl border border-emerald-100">
+                                                                <Activity className="w-3.5 h-3.5" />
+                                                                <span className="text-[10px] font-black uppercase tracking-wider">Secured</span>
+                                                            </div>
+                                                            {log.old_values || log.new_values ? (
+                                                                <div className="flex items-center gap-1.5 bg-amber-50 text-amber-600 px-3 py-1.5 rounded-xl border border-amber-100">
+                                                                    <Eye className="w-3.5 h-3.5" />
+                                                                    <span className="text-[10px] font-black uppercase tracking-wider">Snapshot Available</span>
+                                                                </div>
+                                                            ) : null}
+                                                        </div>
+                                                        <button
+                                                            onClick={() => setSelectedLog(log)}
+                                                            className="group/btn flex items-center gap-2 px-6 py-2.5 bg-[#111827] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all hover:shadow-lg hover:shadow-blue-200"
+                                                        >
+                                                            Detail Audit
+                                                            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>    {/* Print Only Table */}
+            <div className="hidden print:block w-full font-serif text-sm">
+                {/* Header */}
+                <div className="text-center border-b-2 border-black mb-6 pb-4">
+                    <h1 className="text-2xl font-bold uppercase">Laporan Log Aktivitas <br /> UKS Sekolah</h1>
+                    <h2 className="text-m font-bold">MediUKS</h2>
+                    <p className="text-sm mt-2">Jl, Ngadiluwih, Kedungpedaringan, Kec. Kepanjen, <br /> Kabupaten Malang, Jawa Timur 65163</p>
+                    <p className="text-xs mt-4 text-center italic font-medium tracking-wider">
+                        Dicetak pada: {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    {
+                        dateFilter !== 'all' && (
+                            <p className="text-xs font-bold mt-1 uppercase tracking-wider border border-black inline-block px-2 py-1">
+                                Filter: {
+                                    dateFilter === 'today' ? 'Hari Ini' :
+                                        dateFilter === 'yesterday' ? 'Kemarin' :
+                                            dateFilter === 'month' ? 'Bulan Ini' :
+                                                dateFilter === 'year' ? 'Tahun Ini' : ''
+                                }
+                            </p>
+                        )
+                    }
+                </div>
+
+                <h3 className="font-bold border-b border-black mb-2 pb-1 mt-6">Rincian Log Aktivitas</h3>
+                <table className="w-full border-collapse border border-black text-xs">
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="border border-black px-2 py-1 text-center w-10">No</th>
+                            <th className="border border-black px-2 py-1 text-left">Waktu</th>
+                            <th className="border border-black px-2 py-1 text-left">User</th>
+                            <th className="border border-black px-2 py-1 text-left">Role</th>
+                            <th className="border border-black px-2 py-1 text-left">Aksi</th>
+                            <th className="border border-black px-2 py-1 text-left">Deskripsi</th>
+                            <th className="border border-black px-2 py-1 text-left">IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredLogs.map((log, index) => (
+                            <tr key={log.id}>
+                                <td className="border border-black px-2 py-1 text-center">{index + 1}</td>
+                                <td className="border border-black px-2 py-1 whitespace-nowrap">
+                                    {new Date(log.created_at).toLocaleString('id-ID')}
+                                </td>
+                                <td className="border border-black px-2 py-1 font-bold">{log.user?.full_name || 'System'}</td>
+                                <td className="border border-black px-2 py-1 capitalize">{log.user?.role?.name || '-'}</td>
+                                <td className="border border-black px-2 py-1">
+                                    <span className="font-bold uppercase text-[10px]">
+                                        {log.action}
+                                    </span>
+                                </td>
+                                <td className="border border-black px-2 py-1">{log.description}</td>
+                                <td className="border border-black px-2 py-1 font-mono">{log.ip_address || '-'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                {/* Signatures */}
+                <div className="mt-12 grid grid-cols-2 gap-8 text-center break-inside-avoid">
+                    <div></div>
+                    <div>
+                        <p className="mb-16">Mengetahui,<br />Kepala UKS / Koordinator</p>
+                        <p className="font-bold underline">_________________________</p>
+                        <p className="text-xs">NIP. .........................</p>
+                    </div>
                 </div>
             </div>
+
 
             {/* Global Styles for Animations */}
             <style dangerouslySetInnerHTML={{
@@ -442,7 +563,7 @@ const ActivityLogPage = () => {
                 .scrollbar-hide::-webkit-scrollbar { display: none; }
                 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
             ` }} />
-        </div>
+        </div >
     );
 };
 

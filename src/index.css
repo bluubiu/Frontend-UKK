@@ -15,69 +15,51 @@
 
 @media print {
 
-    /* Hide layout elements that shouldn't be printed */
-    aside,
-    header,
-    nav,
-    .no-print,
-    button:not(.print-visible) {
-        display: none !important;
+    /* Global Reset for Print */
+    @page {
+        margin: 20mm;
+        size: auto;
     }
 
-    /* Reset background colors and shadows for better printing */
     body {
+        visibility: hidden;
         background: white !important;
-        padding: 0 !important;
-        margin: 0 !important;
+        color: black !important;
     }
 
-    /* Ensure the main content area takes full width */
-    main {
-        margin: 0 !important;
-        padding: 0 !important;
+    /* Make the print-specific container visible */
+    .print\:block {
+        visibility: visible;
+        display: block !important;
         width: 100% !important;
-        max-width: none !important;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 
-    /* Keep table borders visible */
-    table {
-        border-collapse: collapse !important;
-        width: 100% !important;
+    /* Force all content to be visible by default inside the print block */
+    .print\:block * {
+        visibility: visible;
     }
 
-    th,
-    td {
-        border-bottom: 1px solid #e5e7eb !important;
+
+    /* Override any overflow hiding */
+    html,
+    body,
+    #root,
+    main,
+    div {
+        overflow: visible !important;
+        height: auto !important;
     }
 
-    /* Fix badge colors for print (browsers often hide background colors) */
-    .bg-emerald-50 {
-        background-color: #ecfdf5 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .bg-purple-50 {
-        background-color: #f5f3ff !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .bg-blue-50 {
-        background-color: #eff6ff !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .bg-red-50 {
-        background-color: #fef2f2 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .bg-gray-50 {
-        background-color: #f9fafb !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    /* Hide standard UI elements forcefully */
+    nav,
+    header,
+    aside,
+    footer,
+    button,
+    .no-print {
+        display: none !important;
     }
 }

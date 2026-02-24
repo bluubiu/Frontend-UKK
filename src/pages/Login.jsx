@@ -2,14 +2,15 @@ import { useState } from 'react';
 import axios from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import AuthCarousel from '../components/AuthCarousel';
+import ForgotPasswordModal from '../components/ForgotPasswordModal';
 import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState(null);
@@ -92,52 +93,7 @@ const Login = () => {
                             </label>
                             <button
                                 type="button"
-                                onClick={async () => {
-                                    const { value: username } = await Swal.fire({
-                                        title: 'Lupa Password?',
-                                        text: 'Masukkan username Anda untuk memberitahu Administrator.',
-                                        input: 'text',
-                                        inputPlaceholder: 'Username Anda',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Kirim',
-                                        cancelButtonText: 'Batal',
-                                        confirmButtonColor: '#10B981',
-                                        cancelButtonColor: '#e46a6aff',
-                                        inputValidator: (value) => {
-                                            if (!value) {
-                                                return 'Username tidak boleh kosong!';
-                                            }
-                                        }
-                                    });
-
-                                    if (username) {
-                                        try {
-                                            Swal.fire({
-                                                title: 'Mengirim...',
-                                                allowOutsideClick: false,
-                                                didOpen: () => {
-                                                    Swal.showLoading();
-                                                }
-                                            });
-
-                                            await axios.post('/forgot-password-notification', { username });
-
-                                            Swal.fire({
-                                                title: 'Terikirim!',
-                                                text: 'Notifikasi telah dikirim ke Administrator. Tunggu beberapa saat dengan password default "password123".',
-                                                icon: 'success',
-                                                confirmButtonColor: '#10B981',
-                                            });
-                                        } catch (error) {
-                                            Swal.fire({
-                                                title: 'Gagal!',
-                                                text: error.response?.data?.message || 'Terjadi kesalahan saat mengirim notifikasi.',
-                                                icon: 'error',
-                                                confirmButtonColor: '#EF4444',
-                                            });
-                                        }
-                                    }
-                                }}
+                                onClick={() => setIsForgotPasswordOpen(true)}
                                 className="text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline transition-all"
                             >
                                 Lupa Password?
@@ -151,28 +107,14 @@ const Login = () => {
                             Masuk
                         </button>
 
-                        <div className="relative my-8">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gray-200"></div>
-                            </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="px-4 bg-white text-gray-500">Atau masuk dengan</span>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <button type="button" className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="h-5 w-5 mr-2" alt="Google" />
-                                <span className="text-sm font-medium text-gray-700">Google</span>
-                            </button>
-                            <button type="button" className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="h-5 w-5 mr-2" alt="Facebook" />
-                                <span className="text-sm font-medium text-gray-700">Facebook</span>
-                            </button>
-                        </div>
                     </form>
                 </div>
             </div>
+
+            <ForgotPasswordModal
+                isOpen={isForgotPasswordOpen}
+                onClose={() => setIsForgotPasswordOpen(false)}
+            />
         </div>
     );
 };

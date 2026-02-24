@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation, useNavigate, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
 import { Heart, ShoppingCart, Menu, Search, Bell } from 'lucide-react';
@@ -11,6 +11,27 @@ const DashboardLayout = () => {
     const { cartCount } = useShop();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleSearch = (e) => {
+        if (e.key === 'Enter') {
+            const term = e.target.value.toLowerCase();
+            if (term.includes('barang') || term.includes('item') || term.includes('alat')) {
+                navigate('/admin/items');
+            } else if (term.includes('kategori')) {
+                navigate('/admin/categories');
+            } else if (term.includes('pinjam') || term.includes('loan')) {
+                navigate('/admin/loans');
+            } else if (term.includes('kembali') || term.includes('return')) {
+                navigate('/admin/returns');
+            } else if (term.includes('user') || term.includes('pengguna') || term.includes('siswa')) {
+                navigate('/admin/users');
+            } else {
+                navigate(`/admin/activity-log?search=${e.target.value}`);
+            }
+        }
+    };
 
     const handleBurgerClick = () => {
         // Mobile: toggle sidebar open/close
@@ -25,14 +46,14 @@ const DashboardLayout = () => {
     return (
         <div className="flex h-screen bg-[#F8FAFC] font-sans overflow-hidden">
             {/* Sidebar (Mobile: Off-canvas, Desktop: Static) */}
-            <div className={`fixed inset-y-0 left-0 z-30 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`fixed inset-y-0 left-0 z-30 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden`}>
                 <Sidebar onClose={() => setIsSidebarOpen(false)} isCollapsed={isCollapsed} />
             </div>
 
             {/* Mobile Overlay */}
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm md:hidden"
+                    className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm md:hidden print:hidden"
                     onClick={() => setIsSidebarOpen(false)}
                 ></div>
             )}
@@ -40,7 +61,7 @@ const DashboardLayout = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden relative w-full">
                 {/* Header */}
-                <header className="bg-white/80 shadow backdrop-blur-md sticky top-0 z-20 px-8 py-4 flex items-center justify-between border-b border-gray-100">
+                <header className="bg-white/80 shadow backdrop-blur-md sticky top-0 z-20 px-8 py-4 flex items-center justify-between border-b border-gray-100 print:hidden">
 
                     <div className="flex items-center gap-4">
                         {/* Mobile Menu Button */}
@@ -60,10 +81,8 @@ const DashboardLayout = () => {
                                 type="text"
                                 placeholder="Cari data, alat, atau laporan..."
                                 className="block w-full pl-10 pr-12 py-3 border-none rounded-2xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-0 focus:bg-white focus:shadow-sm sm:text-sm transition-all"
+                                onKeyDown={handleSearch}
                             />
-                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                <span className="text-gray-400 bg-white border border-gray-200 rounded-md px-2 py-0.5 text-xs font-semibold shadow-sm">⌘ F</span>
-                            </div>
                         </div>
                     </div>
 
@@ -84,6 +103,7 @@ const DashboardLayout = () => {
 
                         {/* Profile User */}
                         <div className="flex items-center gap-4 pl-6 border-l border-gray-200">
+
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm font-bold text-gray-800">
                                     {user?.full_name}
@@ -92,22 +112,24 @@ const DashboardLayout = () => {
                                     {user?.email}
                                 </p>
                             </div>
-                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold overflow-hidden border-2 border-white shadow-sm cursor-pointer ring-2 ring-transparent hover:ring-emerald-500/20 transition-all">
-                                {user?.profile_photo_path ? (
-                                    <img
-                                        src={`http://127.0.0.1:8000/storage/${user.profile_photo_path}`}
-                                        alt="User"
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.style.display = 'none';
-                                            e.target.parentNode.innerText = user?.full_name?.charAt(0);
-                                        }}
-                                    />
-                                ) : (
-                                    user?.full_name?.charAt(0)
-                                )}
-                            </div>
+                            <NavLink to="/profile">
+                                <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold overflow-hidden border-2 border-white shadow-sm cursor-pointer ring-2 ring-transparent hover:ring-emerald-500/20 transition-all">
+                                    {user?.profile_photo_path ? (
+                                        <img
+                                            src={`http://127.0.0.1:8000/storage/${user.profile_photo_path}`}
+                                            alt="User"
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.style.display = 'none';
+                                                e.target.parentNode.innerText = user?.full_name?.charAt(0);
+                                            }}
+                                        />
+                                    ) : (
+                                        user?.full_name?.charAt(0)
+                                    )}
+                                </div>
+                            </NavLink>
                         </div>
                     </div>
                 </header>

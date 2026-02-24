@@ -94,7 +94,8 @@ const UsersPage = () => {
     const filteredUsers = users.filter(user =>
         user.full_name?.toLowerCase().includes(search.toLowerCase()) ||
         user.username?.toLowerCase().includes(search.toLowerCase()) ||
-        user.email?.toLowerCase().includes(search.toLowerCase())
+        user.email?.toLowerCase().includes(search.toLowerCase()) ||
+        user.role?.name?.toLowerCase().includes(search.toLowerCase())
     );
 
     const getRoleBadgeColor = (roleName) => {
@@ -108,12 +109,12 @@ const UsersPage = () => {
     return (
         <div className="space-y-6">
             {/* Print Header: Like LoanDetailModal */}
-            <div className="hidden print:block p-8 text-center border-b-2 border-black mb-6">
+            {/* <div className="hidden print:block p-8 text-center border-b-2 border-black mb-6">
                 <h1 className="text-2xl font-bold uppercase">Laporan Data Pengguna <br /> Inventaris Sekolah</h1>
                 <h2 className="text-m font-bold">UKS MediUKS</h2>
                 <p className="text-sm mt-2">Jl, Ngadiluwih, Kedungpedaringan, Kec. Kepanjen, <br /> Kabupaten Malang, Jawa Timur 65163</p>
                 <p className="text-xs mt-4 text-right italic font-medium tracking-wider">Dicetak pada: {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
-            </div>
+            </div> */}
 
             <div className="flex justify-between items-end print:hidden">
                 <div>
@@ -243,43 +244,54 @@ const UsersPage = () => {
             </div>
 
             {/* Print Only: Table Style from LoanDetailModal */}
-            <div className="hidden print:block w-full">
-                <table className="w-full border-collapse border border-black">
+            <div className="hidden print:block w-full font-serif text-sm">
+                {/* Header */}
+                <div className="text-center border-b-2 border-black mb-6 pb-4">
+                    <h1 className="text-2xl font-bold uppercase">Laporan Data Pengguna <br /> UKS Sekolah</h1>
+                    <h2 className="text-m font-bold">MediUKS</h2>
+                    <p className="text-sm mt-2">Jl, Ngadiluwih, Kedungpedaringan, Kec. Kepanjen, <br /> Kabupaten Malang, Jawa Timur 65163</p>
+                    <p className="text-xs mt-4 text-center italic font-medium tracking-wider">
+                        Dicetak pada: {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                </div>
+
+                <h3 className="font-bold border-b border-black mb-2 pb-1 mt-6">Rincian Data Pengguna</h3>
+                <table className="w-full border-collapse border border-black text-xs">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="border border-black p-2 text-center text-sm">No</th>
-                            <th className="border border-black p-2 text-center text-sm">Nama Lengkap</th>
-                            <th className="border border-black p-2 text-center text-sm">Username</th>
-                            <th className="border border-black p-2 text-center text-sm">Email</th>
-                            <th className="border border-black p-2 text-center text-sm">Peran</th>
-                            <th className="border border-black p-2 text-center text-sm">Status</th>
+                            <th className="border border-black px-2 py-1 text-center w-12">No</th>
+                            <th className="border border-black px-2 py-1 text-left">Nama Lengkap</th>
+                            <th className="border border-black px-2 py-1 text-center">Username</th>
+                            <th className="border border-black px-2 py-1 text-left">Email</th>
+                            <th className="border border-black px-2 py-1 text-center">Peran</th>
+                            <th className="border border-black px-2 py-1 text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsers.map((user, index) => (
                             <tr key={user.id}>
-                                <td className="border border-black p-2 text-center text-xs">{index + 1}</td>
-                                <td className="border border-black p-2 text-center text-xs">{user.full_name}</td>
-                                <td className="border border-black p-2 text-center text-xs">@{user.username}</td>
-                                <td className="border border-black p-2 text-center text-xs">{user.email}</td>
-                                <td className="border border-black p-2 text-center text-xs uppercase font-bold">{user.role?.name}</td>
-                                <td className="border border-black p-2 text-center text-xs font-bold">{user.is_active ? 'AKTIF' : 'NONAKTIF'}</td>
+                                <td className="border border-black px-2 py-1 text-center">{index + 1}</td>
+                                <td className="border border-black px-2 py-1 font-medium">{user.full_name}</td>
+                                <td className="border border-black px-2 py-1 text-center">@{user.username}</td>
+                                <td className="border border-black px-2 py-1">{user.email}</td>
+                                <td className="border border-black px-2 py-1 text-center uppercase font-bold">{user.role?.name}</td>
+                                <td className="border border-black px-2 py-1 text-center font-bold">{user.is_active ? 'AKTIF' : 'NONAKTIF'}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
 
-                <div className="mt-12 flex justify-between px-12">
-                    <div className="text-center">
-                        <p className="mb-20">Kepala Bagian,</p>
-                        <p className="font-bold border-b border-black inline-block min-w-[150px]">( ........................... )</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="mb-20">Dicetak Oleh,</p>
-                        <p className="font-bold border-b border-black inline-block min-w-[150px]">( ........................... )</p>
+                {/* Signatures */}
+                <div className="mt-12 grid grid-cols-2 gap-8 text-center break-inside-avoid">
+                    <div></div>
+                    <div>
+                        <p className="mb-16">Mengetahui,<br />Kepala UKS / Koordinator</p>
+                        <p className="font-bold underline">_________________________</p>
+                        <p className="text-xs">NIP. .........................</p>
                     </div>
                 </div>
             </div>
+
 
             <UserModal
                 isOpen={isModalOpen}
@@ -293,7 +305,7 @@ const UsersPage = () => {
                 onClose={() => setIsResetModalOpen(false)}
                 user={currentUser}
             />
-        </div>
+        </div >
     );
 };
 

@@ -421,15 +421,16 @@ const ReportsPage = () => {
                                     <tr>
                                         {activeTab === 'loans' && (
                                             <>
-                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Detail Peminjaman</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Peminjam</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Barang</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jumlah</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                                             </>
                                         )}
                                         {activeTab === 'returns' && (
                                             <>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Peminjam</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Barang</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tgl Kembali</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kondisi</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Denda</th>
@@ -453,6 +454,7 @@ const ReportsPage = () => {
                                         {activeTab === 'fines' && (
                                             <>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Peminjam</th>
+                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Barang</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jumlah</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal</th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
@@ -477,13 +479,26 @@ const ReportsPage = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
+                                                        <div className="space-y-1">
+                                                            {item.details?.slice(0, 2).map((detail, idx) => (
+                                                                <div key={idx} className="flex items-center gap-2">
+                                                                    <Package className="w-3.5 h-3.5 text-gray-400" />
+                                                                    <span className="text-sm text-gray-900 font-medium">{detail.item?.name}</span>
+                                                                    <span className="text-xs text-gray-400">×{detail.quantity}</span>
+                                                                </div>
+                                                            ))}
+                                                            {item.details?.length > 2 && (
+                                                                <div className="text-xs text-gray-400 ml-5">
+                                                                    +{item.details.length - 2} barang lainnya
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
                                                         <div className="flex items-center gap-2 text-sm text-gray-600">
                                                             <Calendar className="w-4 h-4 text-gray-400" />
                                                             {formatDate(item.loan_date)}
                                                         </div>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-600">
-                                                        {item.details?.length || 0} Barang
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${item.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
@@ -499,7 +514,28 @@ const ReportsPage = () => {
                                             )}
                                             {activeTab === 'returns' && (
                                                 <>
-                                                    <td className="px-6 py-4 font-medium text-gray-900">{item.loan?.user?.full_name || '-'}</td>
+                                                    <td className="px-6 py-4">
+                                                        <div>
+                                                            <div className="font-semibold text-gray-900">{item.loan?.user?.full_name || '-'}</div>
+                                                            <div className="text-xs text-gray-400">{item.loan?.user?.email || '-'}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="space-y-1">
+                                                            {item.loan?.details?.slice(0, 2).map((detail, idx) => (
+                                                                <div key={idx} className="flex items-center gap-2">
+                                                                    <Package className="w-3.5 h-3.5 text-gray-400" />
+                                                                    <span className="text-sm text-gray-900 font-medium">{detail.item?.name}</span>
+                                                                    <span className="text-xs text-gray-400">×{detail.quantity}</span>
+                                                                </div>
+                                                            ))}
+                                                            {item.loan?.details?.length > 2 && (
+                                                                <div className="text-xs text-gray-400 ml-5">
+                                                                    +{item.loan.details.length - 2} barang lainnya
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
                                                     <td className="px-6 py-4 text-sm text-gray-600">{formatDate(item.return_date)}</td>
                                                     <td className="px-6 py-4">
                                                         <span className={`text-xs px-2 py-1 rounded-md font-bold uppercase ${item.condition === 'baik' ? 'text-emerald-600' : 'text-amber-600'}`}>
@@ -561,7 +597,28 @@ const ReportsPage = () => {
                                             )}
                                             {activeTab === 'fines' && (
                                                 <>
-                                                    <td className="px-6 py-4 font-medium text-gray-900">{item.return_model?.loan?.user?.full_name || '-'}</td>
+                                                    <td className="px-6 py-4">
+                                                        <div>
+                                                            <div className="font-semibold text-gray-900">{item.return_model?.loan?.user?.full_name || '-'}</div>
+                                                            <div className="text-xs text-gray-400">{item.return_model?.loan?.user?.email || '-'}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="space-y-1">
+                                                            {item.return_model?.loan?.details?.slice(0, 2).map((detail, idx) => (
+                                                                <div key={idx} className="flex items-center gap-2">
+                                                                    <Package className="w-3.5 h-3.5 text-gray-400" />
+                                                                    <span className="text-sm text-gray-900 font-medium">{detail.item?.name}</span>
+                                                                    <span className="text-xs text-gray-400">×{detail.quantity}</span>
+                                                                </div>
+                                                            ))}
+                                                            {item.return_model?.loan?.details?.length > 2 && (
+                                                                <div className="text-xs text-gray-400 ml-5">
+                                                                    +{item.return_model.loan.details.length - 2} barang lainnya
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
                                                     <td className="px-6 py-4 font-bold text-gray-900">{formatCurrency(item.total_fine)}</td>
                                                     <td className="px-6 py-4 text-sm text-gray-600">{formatDate(item.created_at)}</td>
                                                     <td className="px-6 py-4">
@@ -576,7 +633,7 @@ const ReportsPage = () => {
                                     ))}
                                     {reportData?.data?.length === 0 && (
                                         <tr>
-                                            <td colSpan="4" className="px-6 py-12 text-center text-gray-400">
+                                            <td colSpan="5" className="px-6 py-12 text-center text-gray-400">
                                                 <div className="flex flex-col items-center gap-3">
                                                     <Package className="w-10 h-10 opacity-20" />
                                                     <span className="text-sm">Tidak ada rekaman ditemukan</span>
