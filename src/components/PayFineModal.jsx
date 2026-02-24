@@ -63,6 +63,22 @@ const PayFineModal = ({ isOpen, onClose, fine, onSuccess }) => {
         }
     };
 
+    const handleCashSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            const formData = new FormData();
+            formData.append('notes', 'Pembayaran tunai langsung ke UKS');
+            formData.append('_method', 'PUT');
+            await axios.post(`/fines/${fine.id}/confirm-payment`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            setStep('success');
+        } catch (error) {
+            showToast(error.response?.data?.message || 'Gagal mengirim konfirmasi pembayaran.', 'error');
+            setIsSubmitting(false);
+        }
+    };
+
     const loanId = fine?.returnModel?.loan?.id ?? fine?.return_model?.loan_id ?? '-';
 
     // Shared wrapper
@@ -177,8 +193,16 @@ const PayFineModal = ({ isOpen, onClose, fine, onSuccess }) => {
                     </div>
                 </div>
 
-                <button onClick={onClose} className="w-full py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
-                    Saya Mengerti
+                <button
+                    onClick={handleCashSubmit}
+                    disabled={isSubmitting}
+                    className={`w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                        }`}
+                >
+                    {isSubmitting
+                        ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Mengirim...</>
+                        : 'Konfirmasi Akan Bayar di UKS'
+                    }
                 </button>
             </div>
         </Shell>,

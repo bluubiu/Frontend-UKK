@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from '../../api/axios';
-import { CheckCircle2, XCircle, Clock, Printer, Image as ImageIcon, X } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, Printer, Image as ImageIcon, X, Wallet } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 
 const FinesVerificationPage = () => {
@@ -174,8 +174,8 @@ const FinesVerificationPage = () => {
                                             )}
                                         </div>
 
-                                        {/* Proof of Payment — compact thumbnail row */}
-                                        {proofUrl && (
+                                        {/* Proof of Payment / Cash indicator */}
+                                        {proofUrl ? (
                                             <div className="mt-4 pt-4 border-t border-gray-50">
                                                 <p className="text-xs text-gray-400 mb-2">Bukti Pembayaran</p>
                                                 <button
@@ -193,6 +193,17 @@ const FinesVerificationPage = () => {
                                                     </div>
                                                     <ImageIcon className="w-4 h-4 text-gray-300 ml-auto flex-shrink-0" />
                                                 </button>
+                                            </div>
+                                        ) : !!fine.payment_confirmed_by_user && (
+                                            <div className="mt-4 pt-4 border-t border-gray-50">
+                                                <p className="text-xs text-gray-400 mb-2">Metode Pembayaran</p>
+                                                <div className="flex items-center gap-2.5 p-2.5 bg-blue-50 border border-blue-100 rounded-xl">
+                                                    <Wallet className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                                                    <div>
+                                                        <p className="text-xs font-semibold text-blue-800">Bayar Tunai di UKS</p>
+                                                        <p className="text-[10px] text-blue-500">Peminjam akan datang langsung ke ruang UKS</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
                                     </div>

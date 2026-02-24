@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from '../../api/axios';
 import CategoryModal from '../../components/CategoryModal';
-import { Plus, Search, Edit, Trash2, Printer } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Printer, Package } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 
 const CategoriesPage = () => {
@@ -158,11 +158,17 @@ const CategoriesPage = () => {
                                 <p className="text-sm text-gray-400 font-medium">
                                     {cat.description ? cat.description : 'No description provided'}
                                 </p>
+                                <div className="flex item-center gap-2 pt-3 border-3 border-gray-100">
+                                    <Package className="w-4 h-4 text-emerald-500" />
+                                    <span className='text-sm font-semibold text-emerald-600'>{cat.items_count ?? 0}
+
+                                    </span>
+                                </div>
                             </div>
                         ))
                     )}
                 </div>
-            </div>
+            </div>  
 
             {/* Print Only Table */}
             <div className="hidden print:block w-full font-serif text-sm">

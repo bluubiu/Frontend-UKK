@@ -108,20 +108,22 @@ const ItemsPage = () => {
                         <h1 className="text-3xl font-bold text-gray-800">Inventaris</h1>
                         <p className="text-gray-500 mt-2 font-medium">Kelola peralatan medis dan detail stok.</p>
                     </div>
-                    <button
-                        onClick={openCreateModal}
-                        className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
-                    >
-                        <Plus className="w-5 h-5" />
-                        Tambah Barang
-                    </button>
-                    <button
-                        onClick={handlePrint}
-                        className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
-                    >
-                        <Printer className="w-5 h-5" />
-                        Cetak
-                    </button>
+                    <div className='flex gap-2'>
+                        <button
+                            onClick={openCreateModal}
+                            className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Tambah Barang
+                        </button>
+                        <button
+                            onClick={handlePrint}
+                            className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
+                        >
+                            <Printer className="w-5 h-5" />
+                            Cetak
+                        </button>
+                    </div>
                 </div>
 
                 <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4">
