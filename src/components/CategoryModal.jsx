@@ -55,7 +55,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-fade-in-up">
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                     <h3 className="text-lg font-bold text-gray-800">
-                        {initialData ? 'Edit Category' : 'Add New Category'}
+                        {initialData ? 'Edit Kategori' : 'Tambah Kategori Baru'}
                     </h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,7 +80,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                             onChange={handleChange}
                             required
                             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                            placeholder="e.g., Electronics"
+                            placeholder="Medis"
                         />
                     </div>
 
@@ -92,7 +92,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                             onChange={handleChange}
                             rows="3"
                             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                            placeholder="Optional description..."
+                            placeholder="Deskripsi singkat tentang kategori ini"
                         ></textarea>
                     </div>
 
@@ -109,7 +109,7 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                             disabled={loading}
                             className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-200"
                         >
-                            {loading ? 'Saving...' : (initialData ? 'Update Category' : 'Create Category')}
+                            {loading ? 'Saving...' : (initialData ? 'Update Kategori' : 'Tambah Kategori')}
                         </button>
                     </div>
                 </form>

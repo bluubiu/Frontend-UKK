@@ -127,7 +127,7 @@ const UsersPage = () => {
                         className="bg-white text-gray-700 px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-50 border border-gray-200 transition-all flex items-center gap-2 shadow-sm"
                     >
                         <Printer className="w-5 h-5" />
-                        Cetak Laporan
+                        Cetak
                     </button>
                     <button
                         onClick={openCreateModal}

@@ -101,6 +101,12 @@ const ItemModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
         setError('');
 
         try {
+            if (!initialData && !image) {
+                setError('Foto barang wajib diunggah.');
+                setLoading(false);
+                return;
+            }
+
             const data = new FormData();
             data.append('name', formData.name);
             data.append('category_id', formData.category_id);
@@ -171,9 +177,10 @@ const ItemModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                     ref={fileInputRef}
                                     onChange={handleImageChange}
                                     accept="image/jpeg,image/png,image/webp"
+                                    required={!initialData}
                                     className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all cursor-pointer"
                                 />
-                                <p className="text-[10px] text-gray-400 mt-2 font-medium">Format: JPG, PNG, WebP (Maks. 5MB)</p>
+                                <p className="text-[10px] text-gray-400 mt-2 font-medium">Format: JPG, PNG, WebP (Maks. 5MB *Wajib)</p>
                             </div>
                         </div>
                     </div>

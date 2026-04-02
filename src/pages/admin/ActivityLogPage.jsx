@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import axios from '../../api/axios';
-import { Search, History, Activity, Clock, ChevronDown, Filter, User, Globe, Laptop, X, Eye, ArrowRight, Printer, Calendar } from 'lucide-react';
+import { Search, History, Activity, Clock, ChevronDown, Filter, User, Globe, Laptop, X, Eye, ArrowRight, Printer, Calendar, Trash2 } from 'lucide-react';
 
 const ActivityLogPage = () => {
     const [searchParams] = useSearchParams();
@@ -12,6 +12,8 @@ const ActivityLogPage = () => {
     const [activeTab, setActiveTab] = useState('Semua');
     const [selectedLog, setSelectedLog] = useState(null);
     const [dateFilter, setDateFilter] = useState('all');
+    const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+    const [isClearing, setIsClearing] = useState(false);
 
     useEffect(() => {
         const querySearch = searchParams.get('search');
@@ -22,6 +24,25 @@ const ActivityLogPage = () => {
 
     const handlePrint = () => {
         window.print();
+    };
+
+    const handleClearLogs = () => {
+        setIsClearModalOpen(true);
+    };
+
+    const executeClearLogs = async () => {
+        setIsClearing(true);
+        try {
+            await axios.delete('/activity-logs');
+            fetchLogs();
+            setIsClearModalOpen(false);
+            // alert("Semua log aktivitas berhasil dihapus.");
+        } catch (error) {
+            console.error("Kesalahan saat menghapus log aktivitas:", error);
+            alert("Gagal menghapus log aktivitas.");
+        } finally {
+            setIsClearing(false);
+        }
     };
 
     const tabs = [
@@ -281,9 +302,54 @@ const ActivityLogPage = () => {
         );
     };
 
+    const ClearConfirmModal = () => {
+        if (!isClearModalOpen) return null;
+
+        return createPortal(
+            <div className="fixed inset-0 w-full h-screen z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+                <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-scale-up border border-gray-100">
+                    <div className="p-8 text-center bg-white relative">
+                        <div className="mx-auto w-16 h-16 bg-red-50 rounded-[20px] flex items-center justify-center mb-6 ring-4 ring-red-50/50">
+                            <Trash2 className="w-8 h-8 text-red-500" />
+                        </div>
+                        <h3 className="text-xl font-extrabold text-[#111827] mb-2 tracking-tight">Bersihkan Semua Log?</h3>
+                        <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                            Tindakan ini akan menghapus semua riwayat aktivitas sistem secara permanen. Tindakan ini tidak dapat dikembalikan.
+                        </p>
+                    </div>
+                    <div className="p-4 bg-gray-50 flex gap-3 border-t border-gray-100">
+                        <button
+                            onClick={() => setIsClearModalOpen(false)}
+                            disabled={isClearing}
+                            className="flex-1 py-3 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-100 transition-colors disabled:opacity-50"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            onClick={executeClearLogs}
+                            disabled={isClearing}
+                            className="flex-1 py-3 px-4 bg-red-600 border border-transparent text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 shadow-lg shadow-red-600/30"
+                        >
+                            {isClearing ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Menghapus...
+                                </>
+                            ) : (
+                                'Ya, Bersihkan'
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>,
+            document.getElementById('modal-root')
+        );
+    };
+
     return (
         <div className="space-y-8 max-w-6xl mx-auto pb-24">
             <DetailModal />
+            <ClearConfirmModal />
 
             <div className="space-y-8 print:hidden">
                 {/* Header Section */}
@@ -292,12 +358,20 @@ const ActivityLogPage = () => {
                         <h1 className="text-3xl font-extrabold text-[#111827] tracking-tight">Audit Trail & Log</h1>
                         <p className="text-gray-400 mt-1 font-medium italic">Monitoring aktivitas sistem dengan detail forensik.</p>
                     </div>
-                    <div className="flex gap-3">
-                        <button onClick={handlePrint} className="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all shadow-sm group text-gray-600">
-                            <Printer className="w-5 h-5 group-hover:text-blue-600 transition-colors" />
+                    <div className="flex flex-wrap gap-3 mt-4 md:mt-0">
+                        <button
+                            onClick={handleClearLogs}
+                            className="bg-white text-red-600 px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-red-50 border border-gray-200 transition-all flex items-center gap-2 shadow-sm"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                            Bersihkan Log
                         </button>
-                        <button onClick={fetchLogs} className="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all shadow-sm group">
-                            <History className="w-5 h-5 text-gray-400 group-hover:rotate-180 transition-transform duration-500" />
+                        <button
+                            onClick={handlePrint}
+                            className="bg-white text-gray-700 px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-50 border border-gray-200 transition-all flex items-center gap-2 shadow-sm"
+                        >
+                            <Printer className="w-5 h-5" />
+                            Cetak
                         </button>
                     </div>
                 </div>

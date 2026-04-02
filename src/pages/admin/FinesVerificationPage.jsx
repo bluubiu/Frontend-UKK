@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from '../../api/axios';
 import { CheckCircle2, XCircle, Clock, Printer, Image as ImageIcon, X, Wallet } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const FinesVerificationPage = () => {
     const [fines, setFines] = useState([]);
@@ -89,7 +90,7 @@ const FinesVerificationPage = () => {
                         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all shadow-sm"
                     >
                         <Printer className="w-4 h-4" />
-                        <span className="hidden sm:inline">Cetak Laporan</span>
+                        <span className="hidden sm:inline">Cetak</span>
                     </button>
                 </div>
 
@@ -132,7 +133,7 @@ const FinesVerificationPage = () => {
                             const loanId = fine.return_model?.loan_id ?? '—';
                             const amount = `Rp ${parseFloat(fine.total_fine).toLocaleString('id-ID')}`;
                             const proofUrl = fine.proof_of_payment
-                                ? `${axios.defaults.baseURL.replace('/api', '')}/storage/${fine.proof_of_payment}`
+                                ? getImageUrl(fine.proof_of_payment)
                                 : null;
 
                             return (

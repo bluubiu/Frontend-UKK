@@ -125,14 +125,14 @@ const ItemsPage = () => {
                     <div className='flex gap-2'>
                         <button
                             onClick={openCreateModal}
-                            className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
+                            className="bg-gray-800 text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
                         >
                             <Plus className="w-5 h-5" />
                             Tambah Barang
                         </button>
                         <button
                             onClick={handlePrint}
-                            className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
+                            className="bg-white text-gray-700 px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-50 border border-gray-200 transition-all flex items-center gap-2 shadow-sm"
                         >
                             <Printer className="w-5 h-5" />
                             Cetak

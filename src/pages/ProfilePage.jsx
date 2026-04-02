@@ -36,6 +36,7 @@ const ProfilePage = () => {
     full_name: "",
     email: "",
     username: "",
+    nisn: "",
     phone: "",
   });
 
@@ -58,6 +59,7 @@ const ProfilePage = () => {
         full_name: response.data.full_name || "",
         email: response.data.email || "",
         username: response.data.username || "",
+        nisn: response.data.nisn || "",
         phone: response.data.phone || "",
       });
     } catch (error) {
@@ -340,6 +342,21 @@ const ProfilePage = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                    NISN
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
+                    <input
+                      type="text"
+                      value={formData.nisn}
+                      disabled
+                      className="w-full pl-12 pr-4 py-4 bg-gray-100 border border-transparent rounded-[20px] text-gray-500 cursor-not-allowed font-semibold"
+                      placeholder="NISN"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
                     Nomor Telepon
                   </label>
                   <div className="relative">
@@ -349,11 +366,13 @@ const ProfilePage = () => {
                       value={formData.phone}
                       onChange={(e) => {
                         const value = e.target.value.replace(/\D/g, "");
-                        if (value.length <= 15)
+                        if (value.length <= 13)
                           setFormData({ ...formData, phone: value });
                       }}
                       className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all font-semibold"
                       placeholder="081234567890"
+                      minLength={13}
+                      maxLength={13}
                     />
                   </div>
                 </div>

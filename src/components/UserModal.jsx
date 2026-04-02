@@ -6,6 +6,7 @@ import { X, Eye, EyeOff } from 'lucide-react';
 const UserModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     const [formData, setFormData] = useState({
         username: '',
+        nisn: '',
         full_name: '',
         email: '',
         phone: '',
@@ -64,6 +65,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             if (initialData) {
                 setFormData({
                     username: initialData.username,
+                    nisn: initialData.nisn || '',
                     full_name: initialData.full_name,
                     email: initialData.email,
                     phone: initialData.phone || '',
@@ -74,6 +76,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             } else {
                 setFormData({
                     username: '',
+                    nisn: '',
                     full_name: '',
                     email: '',
                     phone: '',
@@ -192,6 +195,26 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                 />
                             </div>
                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">NISN</label>
+                                <input
+                                    type="text"
+                                    name="nisn"
+                                    value={formData.nisn}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/\D/g, '');
+                                        if (value.length <= 10) {
+                                            setFormData(prev => ({ ...prev, nisn: value }));
+                                        }
+                                    }}
+                                    disabled={!!initialData}
+                                    className={`w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all ${initialData ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
+                                    placeholder="Contoh: 0074802588 "
+                                    required
+                                    minLength={10}
+                                    maxLength={10}
+                                />
+                            </div>
+                            <div className="col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                                 <input
                                     type="text"
@@ -226,13 +249,15 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                     value={formData.phone}
                                     onChange={(e) => {
                                         const value = e.target.value.replace(/\D/g, '');
-                                        if (value.length <= 12) {
+                                        if (value.length <= 13) {
                                             setFormData(prev => ({ ...prev, phone: value }));
                                         }
                                     }}
                                     disabled={!!initialData}
                                     placeholder="081234567890"
                                     className={`w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all ${initialData ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}`}
+                                    minLength={13}
+                                    maxLength={13}
                                 />
                             </div>
                         </div>

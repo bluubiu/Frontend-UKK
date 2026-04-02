@@ -154,7 +154,7 @@ const ReportsPage = () => {
                     className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-all shadow-sm h-[42px]"
                 >
                     <Printer className="w-4 h-4" />
-                    <span className="hidden sm:inline">Cetak Laporan</span>
+                    <span className="hidden sm:inline">Cetak</span>
                 </button>
             </div>
 
@@ -275,7 +275,7 @@ const ReportsPage = () => {
                                                     dataKey="value"
                                                     cornerRadius={6}
                                                 >
-                                                    {['#10B981', '#F59E0B', '#EF4444'].map((color, index) => (
+                                                    {['#043915', '#4C763B', '#B0CE88'].map((color, index) => (
                                                         <Cell key={`cell-${index}`} fill={color} strokeWidth={0} />
                                                     ))}
                                                 </Pie>
@@ -289,21 +289,21 @@ const ReportsPage = () => {
                                     <div className="mt-6 space-y-3">
                                         <div className="flex justify-between items-center text-sm">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                                <div className="w-3 h-3 rounded-full bg-[#043915]"></div>
                                                 <span className="text-gray-600">Disetujui</span>
                                             </div>
                                             <span className="font-bold text-gray-900">{reportData.summary.approved}</span>
                                         </div>
                                         <div className="flex justify-between items-center text-sm">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                                                <div className="w-3 h-3 rounded-full bg-[#4C763B]"></div>
                                                 <span className="text-gray-600">Menunggu</span>
                                             </div>
                                             <span className="font-bold text-gray-900">{reportData.summary.pending}</span>
                                         </div>
                                         <div className="flex justify-between items-center text-sm">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                                <div className="w-3 h-3 rounded-full bg-[#B0CE88]"></div>
                                                 <span className="text-gray-600">Ditolak</span>
                                             </div>
                                             <span className="font-bold text-gray-900">{reportData.summary.rejected}</span>

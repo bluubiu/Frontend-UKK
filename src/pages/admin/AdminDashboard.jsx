@@ -269,7 +269,7 @@ const AdminDashboard = () => {
                             >
                                 <RadialBar
                                     minAngle={15}
-                                    label={{ position: 'insideStart', fill: '#fff', fontSize: 0 }} // hide label inside
+                                    label={{ position: 'insideStart', fill: '#fff', fontSize: 0 }}
                                     background
                                     clockWise
                                     dataKey="uv"

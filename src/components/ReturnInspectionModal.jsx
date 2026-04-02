@@ -331,7 +331,7 @@ const ReturnInspectionModal = ({ isOpen, onClose, returnData, onSubmit }) => {
                 <div className="bg-white px-8 pt-6 pb-2 border-b border-gray-50">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold tracking-wider uppercase mb-2">Inspection</span>
+                            <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold tracking-wider uppercase mb-2">Pemeriksaan</span>
                             <h2 className="text-2xl font-bold text-gray-900">Cek Pengembalian</h2>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">

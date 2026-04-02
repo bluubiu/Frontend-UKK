@@ -65,7 +65,7 @@ const CategoriesPage = () => {
                 fetchCategories();
             } catch (error) {
                 console.error("Kesalahan saat menghapus kategori:", error);
-                showToast('Gagal menghapus kategori. Mungkin sedang digunakan oleh item.', 'error');
+                showToast(error.response?.data?.message || 'Gagal menghapus kategori. Mungkin sedang digunakan oleh item.', 'error');
             }
         }
     };
@@ -98,23 +98,23 @@ const CategoriesPage = () => {
                     </div>
                     <div className="flex gap-3">
                     <button
-                        onClick={handlePrint}
-                        className="bg-white text-gray-700 px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-50 border border-gray-200 transition-all flex items-center gap-2 shadow-sm"
-                    >
-                        <Printer className="w-5 h-5" />
-                        Cetak
-                    </button>
-                    <button
                         onClick={openCreateModal}
                         className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
                     >
                         <Plus className="w-5 h-5" />
                         Tambah Kategori
                     </button>
+                    <button
+                        onClick={handlePrint}
+                        className="bg-white text-gray-700 px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-50 border border-gray-200 transition-all flex items-center gap-2 shadow-sm"
+                    >
+                        <Printer className="w-5 h-5" />
+                        Cetak
+                    </button>
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 max-w-xl">
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4">
                     <div className="flex-1 relative">
                         <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
@@ -136,7 +136,7 @@ const CategoriesPage = () => {
                         filteredCategories.map((cat) => (
                             <div key={cat.id} className="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform duration-300 group">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                    <div className="h-7 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                                         <span className="font-bold text-lg">{cat.name.charAt(0).toUpperCase()}</span>
                                     </div>
                                     <div className="flex gap-2">

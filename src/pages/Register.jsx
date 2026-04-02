@@ -7,6 +7,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 const Register = () => {
     const [username, setUsername] = useState('');
+    const [nisn, setNisn] = useState('');
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -60,7 +61,7 @@ const Register = () => {
             return;
         }
 
-        const result = await register({ username, full_name: fullName, email, phone, password, password_confirmation: passwordConfirmation });
+        const result = await register({ username, nisn, full_name: fullName, email, phone, password, password_confirmation: passwordConfirmation });
         if (result.success) {
             navigate('/login');
         } else {
@@ -109,6 +110,23 @@ const Register = () => {
                                 {validationErrors.username && <p className="text-red-500 text-xs mt-1">{validationErrors.username[0]}</p>}
                             </div>
                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">NISN</label>
+                                <input
+                                    type="text"
+                                    value={nisn}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/\D/g, '');
+                                        if (value.length <= 10) setNisn(value);
+                                    }}
+                                    className={`w-full px-4 py-2 rounded-lg border ${validationErrors.nisn ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none`}
+                                    placeholder="Contoh: 0074802588"
+                                    required
+                                    minLength={10}
+                                    maxLength={10}
+                                />
+                                {validationErrors.nisn && <p className="text-red-500 text-xs mt-1">{validationErrors.nisn[0]}</p>}
+                            </div>
+                            <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                                 <input
                                     type="text"
@@ -140,11 +158,13 @@ const Register = () => {
                                 value={phone}
                                 onChange={(e) => {
                                     const value = e.target.value.replace(/\D/g, '');
-                                    if (value.length <= 12) setPhone(value);
+                                    if (value.length <= 13) setPhone(value);
                                 }}
                                 className={`w-full px-4 py-2 rounded-lg border ${validationErrors.phone ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none`}
-                                placeholder="Contoh: 081234567890"
+                                placeholder="Contoh: 0074802588"
                                 required
+                                minLength={13}
+                                maxLength={13}
                             />
                             {validationErrors.phone && <p className="text-red-500 text-xs mt-1">{validationErrors.phone[0]}</p>}
                         </div>
