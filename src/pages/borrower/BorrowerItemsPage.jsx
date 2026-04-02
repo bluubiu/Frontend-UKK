@@ -240,6 +240,7 @@ const BorrowerItemsPage = () => {
                                             <input
                                                 type="date"
                                                 required
+                                                min={new Date().toISOString().split('T')[0]}
                                                 className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-emerald-500 focus:bg-white transition-all outline-none font-medium"
                                                 value={borrowData.loan_date}
                                                 onChange={e => setBorrowData({ ...borrowData, loan_date: e.target.value })}
@@ -252,6 +253,7 @@ const BorrowerItemsPage = () => {
                                             <input
                                                 type="date"
                                                 required
+                                                min={borrowData.loan_date}
                                                 className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-emerald-500 focus:bg-white transition-all outline-none font-medium"
                                                 value={borrowData.return_date}
                                                 onChange={e => setBorrowData({ ...borrowData, return_date: e.target.value })}

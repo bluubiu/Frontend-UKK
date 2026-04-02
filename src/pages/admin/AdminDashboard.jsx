@@ -146,7 +146,7 @@ const AdminDashboard = () => {
                     </div>
                     <h3 className="text-gray-400 text-sm font-bold mb-1">Total Peminjaman</h3>
                     <h2 className="text-3xl font-extrabold text-gray-900">{stats.total_loans}</h2>
-                    <p className="text-xs text-gray-400 mt-2 font-medium">Bulan ini vs bulan lalu</p>
+                    <p className="text-xs text-gray-400 mt-2 font-medium">Barang yang dipinjam</p>
                 </div>
 
                 {/* Card 3: Belum Dibayar (Attention Card) */}
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
                     </div>
                     <h3 className="text-gray-400 text-sm font-bold mb-1">Denda Belum Dibayar</h3>
                     <h2 className="text-3xl font-extrabold text-gray-900">{formatCurrency(stats.total_fines_unpaid)}</h2>
-                    <p className="text-xs text-gray-400 mt-2 font-medium">Perlu penagihan</p>
+                    <p className="text-xs text-gray-400 mt-2 font-medium">Perlu tindakan</p>
                 </div>
 
                 {/* Card 4: Total Inventaris / Users */}

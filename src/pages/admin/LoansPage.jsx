@@ -126,14 +126,28 @@ const LoansPage = () => {
         });
     };
 
+    const handlePrint = () => {
+        window.print();
+    };
+
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-end">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Manajemen Peminjaman</h1>
-                    <p className="text-gray-500 mt-2 font-medium">Tinjau dan setujui permintaan peminjaman peralatan.</p>
+            <div className="space-y-6 print:hidden">
+                <div className="flex justify-between items-end flex-col sm:flex-row gap-4 sm:gap-0">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800">Manajemen Peminjaman</h1>
+                        <p className="text-gray-500 mt-2 font-medium">Tinjau dan setujui permintaan peminjaman peralatan.</p>
+                    </div>
+                    <div className='flex gap-2 w-full sm:w-auto'>
+                        <button
+                            onClick={handlePrint}
+                            className="bg-[#1C1F2B] text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200 w-full sm:w-auto"
+                        >
+                            <Printer className="w-5 h-5" />
+                            Cetak
+                        </button>
+                    </div>
                 </div>
-            </div>
 
             <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4">
                 <div className="flex-1 relative">
@@ -313,6 +327,79 @@ const LoansPage = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
+                </div>
+            </div>
+
+            {/* Print Only Table */}
+            <div className="hidden print:block w-full font-serif text-sm">
+                <div className="text-center border-b-2 border-black mb-6 pb-4">
+                    <h1 className="text-2xl font-bold uppercase">Laporan Peminjaman Peralatan <br /> UKS Sekolah</h1>
+                    <h2 className="text-m font-bold">MediUKS</h2>
+                    <p className="text-sm mt-2">Jl, Ngadiluwih, Kedungpedaringan, Kec. Kepanjen, <br /> Kabupaten Malang, Jawa Timur 65163</p>
+                    <p className="text-xs mt-4 text-center italic font-medium tracking-wider">
+                        Dicetak pada: {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                </div>
+
+                <div className="mb-4 text-xs font-semibold">
+                    <p>Status Filter: {statusFilter === 'all' ? 'Semua Status' : statusFilter === 'pending' ? 'Menunggu' : statusFilter === 'approved' ? 'Disetujui' : statusFilter === 'rejected' ? 'Ditolak' : statusFilter === 'returned' ? 'Dikembalikan' : statusFilter}</p>
+                    {search && <p>Pencarian: "{search}"</p>}
+                </div>
+
+                <h3 className="font-bold border-b border-black mb-2 pb-1 mt-2">Daftar Peminjaman</h3>
+                <table className="w-full border-collapse border border-black text-xs">
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="border border-black px-2 py-1 text-center w-12">ID</th>
+                            <th className="border border-black px-2 py-1 text-left">Peminjam</th>
+                            <th className="border border-black px-2 py-1 text-left">Barang Dipinjam</th>
+                            <th className="border border-black px-2 py-1 text-center">Tgl Pinjam</th>
+                            <th className="border border-black px-2 py-1 text-center">Tgl Kembali</th>
+                            <th className="border border-black px-2 py-1 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredLoans.length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="border border-black px-2 py-4 text-center italic text-gray-500">Tidak ada data peminjaman ditemukan.</td>
+                            </tr>
+                        ) : (
+                            filteredLoans.map((loan) => (
+                                <tr key={loan.id}>
+                                    <td className="border border-black px-2 py-1 text-center w-12">#{loan.id}</td>
+                                    <td className="border border-black px-2 py-1 font-medium">
+                                        {loan.user?.full_name}
+                                        <div className="text-[10px] text-gray-500 font-normal">{loan.user?.email}</div>
+                                    </td>
+                                    <td className="border border-black px-2 py-1">
+                                        <ul className="list-disc pl-3 m-0 space-y-0.5">
+                                            {loan.details?.map((detail, idx) => (
+                                                <li key={idx} className="text-[10px]">{detail.item?.name} (x{detail.quantity})</li>
+                                            ))}
+                                        </ul>
+                                    </td>
+                                    <td className="border border-black px-2 py-1 text-center">{formatDate(loan.loan_date)}</td>
+                                    <td className="border border-black px-2 py-1 text-center">{formatDate(loan.return_date)}</td>
+                                    <td className="border border-black px-2 py-1 text-center uppercase font-bold text-[10px]">
+                                        {loan.status === 'pending' ? 'MENUNGGU' :
+                                         loan.status === 'approved' ? 'DISETUJUI' :
+                                         loan.status === 'rejected' ? 'DITOLAK' :
+                                         loan.status === 'returned' ? 'KEMBALI' : loan.status}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+
+                <div className="mt-12 grid grid-cols-2 gap-8 text-center break-inside-avoid">
+                    <div></div>
+                    <div>
+                        <p className="mb-16">Mengetahui,<br />Kepala UKS / Koordinator</p>
+                        <p className="font-bold underline">_________________________</p>
+                        <p className="text-xs">NIP. .........................</p>
+                    </div>
                 </div>
             </div>
 

@@ -27,7 +27,9 @@ const ProfilePage = () => {
   const [updating, setUpdating] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+  const [passwordMessage, setPasswordMessage] = useState({ type: "", text: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -35,9 +37,14 @@ const ProfilePage = () => {
     email: "",
     username: "",
     phone: "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    current_password: "",
     password: "",
     password_confirmation: "",
   });
+  const [passwordUpdating, setPasswordUpdating] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -52,8 +59,6 @@ const ProfilePage = () => {
         email: response.data.email || "",
         username: response.data.username || "",
         phone: response.data.phone || "",
-        password: "",
-        password_confirmation: "",
       });
     } catch (error) {
       console.error("Kesalahan saat mengambil profil:", error);
@@ -75,12 +80,6 @@ const ProfilePage = () => {
         type: "success",
         text: "Profil telah diperbarui dengan sukses!",
       });
-      // Clear passwords
-      setFormData((prev) => ({
-        ...prev,
-        password: "",
-        password_confirmation: "",
-      }));
     } catch (error) {
       setMessage({
         type: "error",
@@ -113,8 +112,31 @@ const ProfilePage = () => {
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
-    setFormData({ ...formData, password: value });
+    setPasswordData({ ...passwordData, password: value });
     validatePassword(value);
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setPasswordUpdating(true);
+    setPasswordMessage({ type: "", text: "" });
+
+    try {
+      const response = await axios.put("/profile/password", passwordData);
+      setPasswordMessage({
+        type: "success",
+        text: response.data.message || "Password berhasil diperbarui!",
+      });
+      setPasswordData({ current_password: "", password: "", password_confirmation: "" });
+      setPasswordCriteria({ length: false, upper: false, lower: false, number: false, special: false });
+    } catch (error) {
+      setPasswordMessage({
+        type: "error",
+        text: error.response?.data?.message || "Gagal memperbarui password.",
+      });
+    } finally {
+      setPasswordUpdating(false);
+    }
   };
 
   const handlePhotoUpload = async (e) => {
@@ -337,231 +359,6 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              <hr className="border-gray-50 my-4" />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
-                    Password Baru (Opsional)
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={formData.password}
-                      onChange={handlePasswordChange}
-                      className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all font-semibold"
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                  {formData.password && (
-                    <div className="mt-2 text-xs space-y-1 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                      <p className="font-semibold text-gray-600 mb-2">
-                        Syarat Password:
-                      </p>
-                      <div
-                        className={`flex items-center ${passwordCriteria.length
-                            ? "text-emerald-600"
-                            : "text-gray-500"
-                          }`}
-                      >
-                        <span
-                          className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.length
-                              ? "bg-emerald-100 border-emerald-200"
-                              : "border-gray-300"
-                            }`}
-                        >
-                          {passwordCriteria.length && (
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="3"
-                                d="M5 13l4 4L19 7"
-                              ></path>
-                            </svg>
-                          )}
-                        </span>
-                        Minimum 8 karakter
-                      </div>
-                      <div
-                        className={`flex items-center ${passwordCriteria.upper
-                            ? "text-emerald-600"
-                            : "text-gray-500"
-                          }`}
-                      >
-                        <span
-                          className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.upper
-                              ? "bg-emerald-100 border-emerald-200"
-                              : "border-gray-300"
-                            }`}
-                        >
-                          {passwordCriteria.upper && (
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="3"
-                                d="M5 13l4 4L19 7"
-                              ></path>
-                            </svg>
-                          )}
-                        </span>
-                        Huruf kapital (A-Z)
-                      </div>
-                      <div
-                        className={`flex items-center ${passwordCriteria.lower
-                            ? "text-emerald-600"
-                            : "text-gray-500"
-                          }`}
-                      >
-                        <span
-                          className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.lower
-                              ? "bg-emerald-100 border-emerald-200"
-                              : "border-gray-300"
-                            }`}
-                        >
-                          {passwordCriteria.lower && (
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="3"
-                                d="M5 13l4 4L19 7"
-                              ></path>
-                            </svg>
-                          )}
-                        </span>
-                        Huruf kecil (a-z)
-                      </div>
-                      <div
-                        className={`flex items-center ${passwordCriteria.number
-                            ? "text-emerald-600"
-                            : "text-gray-500"
-                          }`}
-                      >
-                        <span
-                          className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.number
-                              ? "bg-emerald-100 border-emerald-200"
-                              : "border-gray-300"
-                            }`}
-                        >
-                          {passwordCriteria.number && (
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="3"
-                                d="M5 13l4 4L19 7"
-                              ></path>
-                            </svg>
-                          )}
-                        </span>
-                        Angka (0-9)
-                      </div>
-                      <div
-                        className={`flex items-center ${passwordCriteria.special
-                            ? "text-emerald-600"
-                            : "text-gray-500"
-                          }`}
-                      >
-                        <span
-                          className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.special
-                              ? "bg-emerald-100 border-emerald-200"
-                              : "border-gray-300"
-                            }`}
-                        >
-                          {passwordCriteria.special && (
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="3"
-                                d="M5 13l4 4L19 7"
-                              ></path>
-                            </svg>
-                          )}
-                        </span>
-                        Karakter spesial (!@#$%^&*)
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
-                    Konfirmasi Password Baru
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={formData.password_confirmation}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          password_confirmation: e.target.value,
-                        })
-                      }
-                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all font-semibold"
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                  {formData.password_confirmation &&
-                    formData.password !== formData.password_confirmation && (
-                      <p className="text-red-500 text-xs mt-1 font-medium">
-                        Password tidak cocok
-                      </p>
-                    )}
-                </div>
-              </div>
-
               <div className="pt-4 flex justify-end">
                 <button
                   type="submit"
@@ -574,6 +371,202 @@ const ProfilePage = () => {
                     <Save className="w-5 h-5" />
                   )}
                   Simpan Perubahan
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="bg-white rounded-[32px] p-10 border border-gray-100 shadow-sm relative group overflow-hidden">
+            <div className="flex justify-between items-center mb-10">
+              <div className="flex items-center gap-3">
+                <Lock className="w-6 h-6 text-emerald-600" />
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Keamanan Akun
+                </h2>
+              </div>
+            </div>
+
+            {passwordMessage.text && (
+              <div
+                className={`mb-8 p-4 rounded-2xl border flex items-center gap-3 ${
+                  passwordMessage.type === "success"
+                    ? "bg-emerald-50 border-emerald-100 text-emerald-700"
+                    : "bg-red-50 border-red-100 text-red-700"
+                }`}
+              >
+                {passwordMessage.type === "success" ? (
+                  <ShieldCheck className="w-5 h-5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5" />
+                )}
+                <span className="text-sm font-bold">{passwordMessage.text}</span>
+              </div>
+            )}
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-6">
+              <div className="space-y-6 max-w-xl">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                    Password Saat Ini
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={passwordData.current_password}
+                      onChange={(e) =>
+                        setPasswordData({ ...passwordData, current_password: e.target.value })
+                      }
+                      className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all font-semibold"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showCurrentPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                    Password Baru
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={passwordData.password}
+                      onChange={handlePasswordChange}
+                      className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all font-semibold"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  {passwordData.password && (
+                    <div className="mt-2 text-xs space-y-1 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                      <p className="font-semibold text-gray-600 mb-2">
+                        Syarat Password:
+                      </p>
+                      <div
+                        className={`flex items-center ${
+                          passwordCriteria.length
+                            ? "text-emerald-600"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        <span
+                          className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${
+                            passwordCriteria.length
+                              ? "bg-emerald-100 border-emerald-200"
+                              : "border-gray-300"
+                          }`}
+                        >
+                          {passwordCriteria.length && (
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                          )}
+                        </span>
+                        Minimum 8 karakter
+                      </div>
+                      <div className={`flex items-center ${passwordCriteria.upper ? "text-emerald-600" : "text-gray-500"}`}>
+                        <span className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.upper ? "bg-emerald-100 border-emerald-200" : "border-gray-300"}`}>
+                          {passwordCriteria.upper && <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                        </span>
+                        Huruf kapital (A-Z)
+                      </div>
+                      <div className={`flex items-center ${passwordCriteria.lower ? "text-emerald-600" : "text-gray-500"}`}>
+                        <span className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.lower ? "bg-emerald-100 border-emerald-200" : "border-gray-300"}`}>
+                          {passwordCriteria.lower && <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                        </span>
+                        Huruf kecil (a-z)
+                      </div>
+                      <div className={`flex items-center ${passwordCriteria.number ? "text-emerald-600" : "text-gray-500"}`}>
+                        <span className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.number ? "bg-emerald-100 border-emerald-200" : "border-gray-300"}`}>
+                          {passwordCriteria.number && <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                        </span>
+                        Angka (0-9)
+                      </div>
+                      <div className={`flex items-center ${passwordCriteria.special ? "text-emerald-600" : "text-gray-500"}`}>
+                        <span className={`w-4 h-4 mr-2 rounded-full flex items-center justify-center border ${passwordCriteria.special ? "bg-emerald-100 border-emerald-200" : "border-gray-300"}`}>
+                          {passwordCriteria.special && <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                        </span>
+                        Karakter spesial (!@#$%^&*)
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                    Konfirmasi Password Baru
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={passwordData.password_confirmation}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          password_confirmation: e.target.value,
+                        })
+                      }
+                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all font-semibold"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  {passwordData.password_confirmation &&
+                    passwordData.password !== passwordData.password_confirmation && (
+                      <p className="text-red-500 text-xs mt-1 font-medium">
+                        Password tidak cocok
+                      </p>
+                    )}
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={passwordUpdating || !Object.values(passwordCriteria).every(Boolean) || passwordData.password !== passwordData.password_confirmation}
+                  className="bg-emerald-600 text-white px-8 py-4 rounded-2xl text-sm font-bold shadow-xl shadow-emerald-500/20 hover:bg-emerald-500 transition-all flex items-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {passwordUpdating ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Save className="w-5 h-5" />
+                  )}
+                  Ubah Password
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

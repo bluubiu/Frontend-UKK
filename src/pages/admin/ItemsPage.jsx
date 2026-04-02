@@ -9,6 +9,9 @@ const ItemsPage = () => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [filterCategory, setFilterCategory] = useState('all');
+    const [filterCondition, setFilterCondition] = useState('all');
+    const [filterStock, setFilterStock] = useState('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const { showToast, confirm } = useNotification();
@@ -95,10 +98,21 @@ const ItemsPage = () => {
         window.print();
     };
 
-    const filteredItems = items.filter(item =>
-        item.name.toLowerCase().includes(search.toLowerCase()) ||
-        (item.category?.name || '').toLowerCase().includes(search.toLowerCase())
-    );
+    const categories = [...new Set(items.map(i => i.category?.name).filter(Boolean))];
+
+    const filteredItems = items.filter(item => {
+        const matchSearch = item.name.toLowerCase().includes(search.toLowerCase()) ||
+            (item.category?.name || '').toLowerCase().includes(search.toLowerCase());
+            
+        const matchCategory = filterCategory === 'all' || item.category?.name === filterCategory;
+        const matchCondition = filterCondition === 'all' || item.condition === filterCondition;
+        
+        let matchStock = true;
+        if (filterStock === 'available') matchStock = item.available_stock > 0;
+        else if (filterStock === 'empty') matchStock = item.available_stock === 0;
+
+        return matchSearch && matchCategory && matchCondition && matchStock;
+    });
 
     return (
         <div className="space-y-6">
@@ -126,7 +140,7 @@ const ItemsPage = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4">
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-4">
                     <div className="flex-1 relative">
                         <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
@@ -136,6 +150,37 @@ const ItemsPage = () => {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0">
+                        <select
+                            value={filterCategory}
+                            onChange={(e) => setFilterCategory(e.target.value)}
+                            className="px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white text-sm font-medium text-gray-700 min-w-[140px]"
+                        >
+                            <option value="all">Semua Kategori</option>
+                            {categories.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                        </select>
+                        <select
+                            value={filterCondition}
+                            onChange={(e) => setFilterCondition(e.target.value)}
+                            className="px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white text-sm font-medium text-gray-700 min-w-[140px]"
+                        >
+                            <option value="all">Semua Kondisi</option>
+                            <option value="baik">Kondisi: Baik</option>
+                            <option value="rusak ringan">Kondisi: Rusak Ringan</option>
+                            <option value="rusak berat">Kondisi: Rusak Berat</option>
+                        </select>
+                        <select
+                            value={filterStock}
+                            onChange={(e) => setFilterStock(e.target.value)}
+                            className="px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white text-sm font-medium text-gray-700 min-w-[140px]"
+                        >
+                            <option value="all">Semua Stok</option>
+                            <option value="available">Stok Tersedia</option>
+                            <option value="empty">Stok Habis</option>
+                        </select>
                     </div>
                 </div>
 

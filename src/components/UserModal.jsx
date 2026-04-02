@@ -253,7 +253,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                         </div>
 
                         {/* Password Section */}
-                        <div>
+                        <div> 
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 {initialData ? 'Password Baru (Kosongkan jika tidak ingin mengubah)' : 'Password'}
                             </label>
