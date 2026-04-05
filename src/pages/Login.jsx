@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthCarousel from '../components/AuthCarousel';
 import ForgotPasswordModal from '../components/ForgotPasswordModal';
 import { Eye, EyeOff } from 'lucide-react';
+// import axios from 'axios';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -13,7 +14,18 @@ const Login = () => {
     const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const errorParam = queryParams.get('error');
+        if (errorParam === 'GoogleLoginFailed') {
+            setError('Gagal login menggunakan Google. Silakan coba lagi.');
+        } else if (errorParam === 'GoogleEmailNotFound') {
+            setError('Akun tidak ditemukan. Silakan Register manual terlebih dahulu menggunakan NISN Anda sebelum menggunakan fitur Login Google.');
+        }
+    }, [location]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,6 +37,20 @@ const Login = () => {
             navigate(dashboardPath);
         } else {
             setError(result.message);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+            // Panggil endpoint redirect yang telah dibuat di backend
+            const response = await axios.get('http://localhost:8000/api/auth/google/redirect');
+
+            // Pindahkan user otomatis ke Halaman Autentikasi Milik Google
+            if (response.data.url) {
+                window.location.href = response.data.url;
+            }
+        } catch (error) {
+            console.error("Gagal memulai autentikasi Google:", error);
         }
     };
 
@@ -106,7 +132,17 @@ const Login = () => {
                         >
                             Masuk
                         </button>
-
+                        <div className="mt-4">
+                            <button
+                                type="button"
+                                onClick={handleGoogleLogin}
+                                className="w-full flex items-center justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                            >
+                                {/* Ikon Vektor G-Logo */}
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="h-5 w-5 mr-3" />
+                                <span className="font-medium text-gray-700">Lanjutkan dengan Google</span>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

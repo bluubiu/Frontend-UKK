@@ -4,7 +4,7 @@ import { ShopProvider } from './context/ShopContext';
 import { NotificationProvider } from './context/NotificationProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
-
+import AuthCallback from './pages/auth/AuthCallback';
 // Pages
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -47,6 +47,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
 
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
