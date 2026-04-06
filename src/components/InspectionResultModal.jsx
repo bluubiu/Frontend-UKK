@@ -5,7 +5,6 @@ import { CheckCircle2, XCircle, AlertCircle, Package, TrendingUp, DollarSign } f
 const InspectionResultModal = ({ isOpen, onClose, result }) => {
     const modalRef = useRef(null);
 
-    // Close on click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {

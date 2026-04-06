@@ -5,7 +5,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     const { token, user, loading } = useAuth();
 
     if (loading) {
-        return <div>Loading...</div>; // Or a proper loading spinner
+        return <div>Loading...</div>; 
     }
 
     if (!token) {
@@ -13,7 +13,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     }
 
     if (allowedRoles && !allowedRoles.includes(user?.role?.name)) {
-        return <Navigate to="/dashboard" replace />; // Redirect to user dashboard if unauthorized
+        return <Navigate to="/dashboard" replace />; 
     }
 
     return children ? children : <Outlet />;

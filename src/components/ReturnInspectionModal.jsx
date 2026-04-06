@@ -89,8 +89,6 @@ const ReturnInspectionModal = ({ isOpen, onClose, returnData, onSubmit }) => {
 
     if (!isOpen) return null;
 
-    // Reusable Rating Option Component
-    // Reusable Rating Option Component
     const RatingOption = ({ value, label, description, current, onChange, color = "emerald" }) => {
         const colorStyles = {
             emerald: {

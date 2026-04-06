@@ -5,7 +5,6 @@ import { XCircle, Printer } from 'lucide-react';
 const ReceiptModal = ({ isOpen, onClose, loan }) => {
     const modalRef = useRef(null);
 
-    // Close on click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -40,7 +39,6 @@ const ReceiptModal = ({ isOpen, onClose, loan }) => {
         <div className="fixed inset-0 w-full h-screen bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4 font-sans animate-fade-in print:p-0 print:bg-white print:fixed print:inset-0">
             <div ref={modalRef} className="bg-white rounded-[32px] shadow-2xl max-w-xl w-full max-h-[90vh] overflow-hidden flex flex-col print:shadow-none print:max-w-none print:h-full print:rounded-none">
 
-                {/* Header (Screen) */}
                 <div className="bg-white px-8 py-6 border-b border-gray-100 flex justify-between items-center print:hidden">
                     <h2 className="text-xl font-bold text-gray-900">Bukti Peminjaman</h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 hover:text-gray-600 transition-colors">
@@ -48,7 +46,6 @@ const ReceiptModal = ({ isOpen, onClose, loan }) => {
                     </button>
                 </div>
 
-                {/* Content */}
                 <div className="bg-white p-8 print:p-0">
                     <div className="text-center border-b-2 border-dashed border-gray-200 pb-6 mb-6 print:border-black">
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900">MediUKS Receipt</h1>

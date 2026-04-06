@@ -29,7 +29,7 @@ const FinesPrintPage = () => {
         if (!loading && fines) {
             setTimeout(() => {
                 window.print();
-            }, 500);
+            }, 1000);
         }
     }, [loading, fines]);
 
@@ -53,7 +53,7 @@ const FinesPrintPage = () => {
     }
 
     return (
-        <div className="bg-white p-8 max-w-[210mm] mx-auto print:p-0 font-serif text-sm">
+        <div className="bg-white p-8 max-w-[210mm] mx-auto print:p-0 print:block font-serif text-sm">
             {/* Header */}
             <div className="text-center border-b-2 border-black mb-6 pb-4">
                 <h1 className="text-2xl font-bold uppercase">Laporan Verifikasi Denda <br /> UKS Sekolah</h1>

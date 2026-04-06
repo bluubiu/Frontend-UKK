@@ -25,7 +25,9 @@ const LoanPrintPage = () => {
 
     useEffect(() => {
         if (!loading && loan) {
-            window.print();
+            setTimeout(() => {
+                window.print();
+            }, 1000);
         }
     }, [loading, loan]);
 
@@ -55,9 +57,9 @@ const LoanPrintPage = () => {
     };
 
     return (
-        <div className="bg-white p-8 max-w-4xl mx-auto print:p-0 font-serif">
+        <div className="bg-white p-8 max-w-4xl mx-auto print:p-0 print:block font-serif">
             {/* Header */}
-                <div className="hidden print:block p-8 text-center border-b-2 border-black mb-6">
+                <div className="p-8 text-center border-b-2 border-black mb-6">
                     <h1 className="text-2xl font-bold uppercase">Laporan Bukti Peminjaman <br /> UKS Sekolah</h1>
                     <h2 className="text-m font-bold">MediUKS</h2>
                     <p className="text-sm mt-2">Jl, Ngadiluwih, Kedungpedaringan, Kec. Kepanjen, <br /> Kabupaten Malang, Jawa Timur 65163</p>

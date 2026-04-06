@@ -81,7 +81,6 @@ const PayFineModal = ({ isOpen, onClose, fine, onSuccess }) => {
 
     const loanId = fine?.returnModel?.loan?.id ?? fine?.return_model?.loan_id ?? '-';
 
-    // Shared wrapper
     const Shell = ({ children, onBack }) => (
         <div className="fixed inset-0 w-full h-screen bg-black/50 flex items-center justify-center z-[60] p-4 font-sans">
             <div ref={modalRef} className="bg-white rounded-2xl shadow-xl max-w-md w-full flex flex-col max-h-[90vh]">
@@ -105,7 +104,6 @@ const PayFineModal = ({ isOpen, onClose, fine, onSuccess }) => {
         </div>
     );
 
-    // Amount row
     const AmountRow = () => (
         <div className="flex items-center justify-between px-5 py-4 bg-gray-50 border-b border-gray-100">
             <span className="text-sm text-gray-500">Total Tagihan</span>
@@ -113,7 +111,6 @@ const PayFineModal = ({ isOpen, onClose, fine, onSuccess }) => {
         </div>
     );
 
-    // ── Success ──────────────────────────────────────────────────────
     if (step === 'success') return createPortal(
         <div className="fixed inset-0 w-full h-screen bg-black/50 flex items-center justify-center z-[60] p-4 font-sans">
             <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-8 text-center">
@@ -132,7 +129,6 @@ const PayFineModal = ({ isOpen, onClose, fine, onSuccess }) => {
         document.getElementById('modal-root')
     );
 
-    // ── Method Selection ─────────────────────────────────────────────
     if (step === 'select') return createPortal(
         <Shell>
             <AmountRow />
@@ -169,7 +165,6 @@ const PayFineModal = ({ isOpen, onClose, fine, onSuccess }) => {
         document.getElementById('modal-root')
     );
 
-    // ── Bayar Langsung ───────────────────────────────────────────────
     if (step === 'cash') return createPortal(
         <Shell onBack={() => setStep('select')}>
             <AmountRow />

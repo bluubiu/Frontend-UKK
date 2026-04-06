@@ -48,8 +48,6 @@ const CategoryModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
 
     if (!isOpen) return null;
 
-    // ... (inside component)
-
     return createPortal(
         <div className="fixed inset-0 w-full h-screen z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-fade-in-up">

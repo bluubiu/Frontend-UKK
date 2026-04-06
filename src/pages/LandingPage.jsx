@@ -6,7 +6,6 @@ import { Activity, ChevronRight, ShieldCheck, Clock, Zap, Package, Star, Chevron
 import aboutUsImage from '../assets/about-us.png';
 import { useInView, useCounter, useScrollProgress, useScrollSpy } from '../hooks/useLanding';
 
-/* ── Reveal wrapper ── */
 const Reveal = ({ children, className = '', delay = 0, y = 60 }) => {
     const [ref, vis] = useInView(0.15);
     return (
@@ -17,7 +16,6 @@ const Reveal = ({ children, className = '', delay = 0, y = 60 }) => {
     );
 };
 
-/* ── Stat component (Scroll-Linked) ── */
 const Stat = ({ t, s = '', label, setRef }) => {
     return (
         <div>
@@ -43,7 +41,6 @@ export default function LandingPage() {
     const prog = useScrollProgress();
     const activeNav = useScrollSpy(['home', 'tentang-kami', 'fitur', 'showcase', 'testimoni', 'faq'], 200);
 
-    /* ── TRUE PARALLAX: ref-based rAF ── */
     const heroImgRef = useRef(null);
     const aboutImgRef = useRef(null);
     const statsNumbersRef = useRef([]);
@@ -166,7 +163,7 @@ export default function LandingPage() {
                 </div>
             </nav>
 
-            {/* ══ HERO — Minimal & Huge Typography ══ */}
+            {/* ══ HERO  ══ */}
             <section id="home" className="relative min-h-screen flex items-center pt-32 pb-40 px-8 lg:px-16 max-w-[1600px] mx-auto">
                 <div className="w-full flex flex-col lg:flex-row gap-16 lg:gap-8 justify-between items-center relative z-10">
                     <div className="flex-1 w-full relative z-10">
@@ -206,14 +203,11 @@ export default function LandingPage() {
                         </Reveal>
                     </div>
 
-                    {/* Right side graphic piece (abstracted stethoscope SVG from previous) */}
                     <div className="flex-1 w-full hidden lg:flex justify-end pr-8" style={{ perspective: '1000px' }}>
                         <div ref={heroImgRef} className="w-full max-w-md aspect-[3/4] bg-emerald-50 p-12 relative flex items-center justify-center mix-blend-multiply transition-transform duration-1000 ease-out" style={{ transformStyle: 'preserve-3d' }}>
-                            {/* Abstract Decorative Element */}
                             <div className="absolute top-0 right-0 w-32 h-32 border-r-2 border-t-2 border-emerald-500" />
                             <div className="absolute bottom-0 left-0 w-32 h-32 border-l-2 border-b-2 border-emerald-500" />
                             <svg viewBox="0 0 400 460" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[120%] h-auto absolute right-[-10%] opacity-90 drop-shadow-2xl">
-                                {/* Simplified and bolded stethoscope paths from before */}
                                 <path d="M148 80 C148 80 120 72 108 92 C96 112 100 148 100 148" stroke="#059669" strokeWidth="18" strokeLinecap="square" />
                                 <path d="M252 80 C252 80 280 72 292 92 C304 112 300 148 300 148" stroke="#059669" strokeWidth="18" strokeLinecap="square" />
                                 <rect x="90" y="142" width="20" height="20" fill="#047857" />
@@ -229,7 +223,7 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ══ TENTANG KAMI — Sticky scrolling ══ */}
+            {/* ══ TENTANG KAMI ══ */}
             <section id="tentang-kami" className="relative bg-black text-white py-40 px-8 lg:px-16 overflow-hidden">
                 <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-24 items-start">
                     <div className="lg:w-5/12 lg:sticky lg:top-40 pl-0">

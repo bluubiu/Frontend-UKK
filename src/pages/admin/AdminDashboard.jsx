@@ -104,12 +104,12 @@ const AdminDashboard = () => {
                         </>
                     )}
                 </div>
-                {user?.role?.name === 'admin' && (
+                {/* {user?.role?.name === 'admin' && (
                     <a href="/admin/items/create"><button className="bg-gray-900 text-white px-5 py-3 rounded-2xl text-sm font-bold hover:bg-black transition-all flex items-center gap-2 shadow-xl shadow-gray-100">
                         <Plus className="w-4 h-4" />
                         Tambah Barang
                     </button></a>
-                )}
+                )} */}
             </div>
 
             {/* Top Cards Section - Inspired by DealDeck */}

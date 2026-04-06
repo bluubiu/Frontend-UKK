@@ -13,7 +13,6 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
     const { showToast } = useNotification();
 
     const handleReset = () => {
-        // Reset states when modal opens
         setNewPassword('');
         setError('');
         setResetComplete(false);
