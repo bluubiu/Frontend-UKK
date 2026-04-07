@@ -161,7 +161,7 @@ const Register = () => {
                                     if (value.length <= 13) setPhone(value);
                                 }}
                                 className={`w-full px-4 py-2 rounded-lg border ${validationErrors.phone ? 'border-red-500' : 'border-gray-300'} focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors bg-white outline-none`}
-                                placeholder="Contoh: 0074802588"
+                                placeholder="Contoh: 081239334675"
                                 required
                                 minLength={13}
                                 maxLength={13}
